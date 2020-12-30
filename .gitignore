@@ -3,3 +3,11 @@
 ################################################################################
 
 /OpenGL.VC.VC.opendb
+/OpenGL.VC.db
+/project_VBO_EBO_VAO/Debug
+/project_shader_test/Debug
+/project_lib/Debug
+/libraries/libs/project_lib.lib
+/libraries/libs/project_lib.pdb
+/Debug
+/.vs
