@@ -12,8 +12,7 @@ GLFWwindow *createWindow();
 bool loadGLFuncPointer();
 ShaderProgram buildShaderProgram();
 void renderLoop( GLFWwindow *window, std::function<void()> renderCallback );
-void setupData_VBO( GLuint *VAO, GLuint *VBO );
-void setupData_EBO( GLuint *VAO, GLuint *VBO, GLuint *EBO );
+void buildVertexData( GLuint *VAO, GLuint *VBO, GLuint *EBO );
 
 int main()
 {
@@ -29,24 +28,8 @@ int main()
 
     ShaderProgram shaderProgram = buildShaderProgram();                     // build and compile our shader program
 
-    enum DATA_MODE
-    {
-        MODE_VBO,
-        MODE_EBO,
-    };
-    int mode = MODE_EBO;
     GLuint VAO = 0, VBO = 0, EBO = 0;
-    switch( mode )
-    {
-        case MODE_VBO:
-            setupData_VBO( &VAO, &VBO );
-            break;
-        case MODE_EBO:
-            setupData_EBO( &VAO, &VBO, &EBO );
-            break;
-        default:
-            break;
-    }
+    buildVertexData( &VAO, &VBO, &EBO );
 
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );    // GL_LINE：线框模式；GL_FILL：填充模式
 
@@ -59,26 +42,11 @@ int main()
 
         shaderProgram.set4Float( "appColor", 0.0f, ( sin( glfwGetTime() ) / 2.0f ) + 0.5f, 0.0f, 1.0f );
 
-        switch( mode )
-        {
-            case MODE_VBO:                          // 通过VBO绘制图形
-            {
-                glBindVertexArray( VAO );           // 因为开启了core profile模式，所以必须使用VAO
-                glDrawArrays( GL_TRIANGLES, 0, 6 );
-                glBindVertexArray( 0 );
-                break;
-            }
-            case MODE_EBO:                          // 通过EBO绘制图形
-            {
-                glBindVertexArray( VAO );
-                // glDrawArrays( GL_TRIANGLES, 2, 3 );
-                glDrawElements( GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0 );
-                glBindVertexArray( 0 );
-                break;
-            }
-            default:
-                break;
-        }
+        glBindVertexArray( VAO );
+        // glDrawArrays( GL_TRIANGLES, 2, 3 );
+        glDrawElements( GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0 );
+        glBindVertexArray( 0 );
+
     } );
 
     // optional: de-allocate all resources once they've outlived their purpose:
@@ -184,39 +152,7 @@ void renderLoop( GLFWwindow *window, std::function<void()> renderCallback )
     }
 }
 
-void setupData_VBO( GLuint *VAO, GLuint *VBO )
-{
-    // 6个顶点绘制两个三角形组成矩形
-    float vertices[] =
-    {
-        0.5f,  0.5f, 0.0f,          // 右上角
-        0.5f, -0.5f, 0.0f,          // 右下角
-        -0.5f,  0.5f, 0.0f,         // 左上角
-
-        -0.5f,  0.5f, 0.0f,         // 左上角
-        -0.5f, -0.5f, 0.0f,         // 左下角
-        0.5f, -0.5f, 0.0f,          // 右下角
-    };
-
-    glGenVertexArrays( 1, VAO );    // 创建VAO
-    glBindVertexArray( *VAO );      // 绑定到当前VAO，记录后续的状态设置
-
-    glGenBuffers( 1, VBO );                 // 创建一个缓冲对象
-    glBindBuffer( GL_ARRAY_BUFFER, *VBO );  // 绑定到当前GL_ARRAY_BUFFER类型的缓冲，即VBO
-    glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, GL_STATIC_DRAW );  // 填充数据
-
-    glVertexAttribPointer( 0,                       // 指定vertex attribute的位置值，这个值对应在顶点着色器中的location=0的属性
-                           3,                       // 顶点属性的分量数量（number of component）
-                           GL_FLOAT,                // 分量数据类型（data type of component）
-                           GL_FALSE,                // 数据是否需要被标准化
-                           3 * sizeof( float ),     // 步长Stride，属性间隔，注意是两个属性值相同位置的间隔，不是首尾间隔。
-                           ( void * ) 0 );          // 数据在缓冲中起始位置的偏移量
-
-    glEnableVertexAttribArray( 0 );                 // 恢复至默认状态
-    glBindVertexArray( 0 );                         // 恢复至默认状态，只要有VAO就能快速恢复。
-}
-
-void setupData_EBO( GLuint *VAO, GLuint *VBO, GLuint *EBO )
+void buildVertexData( GLuint *VAO, GLuint *VBO, GLuint *EBO )
 {
     // 4个顶点绘制两个三角形组成矩形
     float vertices[] =
