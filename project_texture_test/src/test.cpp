@@ -163,10 +163,10 @@ void buildVertexData( GLuint *VAO, GLuint *VBO, GLuint *EBO )
     float vertices[] =
     {
         // 位置                // 颜色                  // 纹理坐标
-        0.5f, 0.5f, 0.0f,     1.0f, 0.0f, 0.0f, 1.0f,   1.0f, 1.0f,  // 右上
-        0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f, 1.0f,   1.0f, 0.0f,  // 右下
-        -0.5f, 0.5f, 0.0f,    1.0f, 1.0f, 0.0f, 1.0f,   0.0f, 1.0f,  // 左上
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,   0.0f, 0.0f,  // 左下
+        0.5f, 0.5f, 0.0f,     1.0f, 0.0f, 0.0f, 1.0f,   0.75f, 0.75f,  // 右上
+        0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f, 1.0f,   0.75f, 0.65f,  // 右下
+        -0.5f, 0.5f, 0.0f,    1.0f, 1.0f, 0.0f, 1.0f,   0.65f, 0.75f,  // 左上
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,   0.65f, 0.65f,  // 左下
     };
     // OpenGL规定：顶点坐标（0.0，0.0）在中心点，而纹理坐标（0.0，0.0）在左下角
     // 在常见图片格式中，（0.0，0.0）可能是在图片左上角，因此可能导致图片倒转。
@@ -232,10 +232,10 @@ void buildTextureData1( const ShaderProgram &shaderProgram )
     shaderProgram.use();                        // 设置uniform值之前别忘记glUseProgram
     shaderProgram.setInt( "texture0", 0 );      // 对应着色器中的Uniform变量，uniform sampler2D texture0;
 
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );         // “X”轴方向上的Wrapping方式
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );         // “Y”轴方向上的Wrapping方式
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );  // “X”轴方向上的Wrapping方式
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );  // “Y”轴方向上的Wrapping方式
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );     // 纹理缩小时，采用GL_LINEAR策略
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );     // 纹理放大时，采用GL_LINEAR策略
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );     // 纹理放大时，采用GL_LINEAR策略
 
     GLint width, height, nrChannels;
     // 加载图片到内存中
