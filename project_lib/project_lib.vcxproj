@@ -122,10 +122,7 @@
     <ClCompile Include="src\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\project_lib.h" />
     <ClInclude Include="src\shader.h" />
-    <ClInclude Include="src\stb_image.h" />
-    <ClInclude Include="src\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

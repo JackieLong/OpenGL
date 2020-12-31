@@ -8,11 +8,11 @@
 class ShaderProgram
 {
 public:
-    ShaderProgram( const std::string &vertexPath,       // 顶点着色器文件路径
-                   const std::string &fragmentPath );   // 片元着色器文件路径
+    ShaderProgram( const GLchar *vertexPath,        // 顶点着色器文件路径
+                   const GLchar *fragmentPath );    // 片元着色器文件路径
 
 
-    void use() const;                                     // 使用/激活程序
+    void use();                                     // 使用/激活程序
 
     // uniform工具函数
     void setBool( const std::string &name, bool value ) const;
