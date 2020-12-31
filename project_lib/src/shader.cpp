@@ -1,5 +1,6 @@
-﻿#include "shader.h"
-#include <fstream>
+﻿#include <fstream>
+
+#include "shader.h"
 
 using namespace std;
 
@@ -29,7 +30,7 @@ ShaderProgram::ShaderProgram( const string &vertexPath, const string &fragmentPa
     int success;                                                    // 编译成功与否
     const int lenLog = 512;                                         // 日志长度
     char infoLog[lenLog];                                           // 编译输出日志
-    glGetProgramiv( id, GL_LINK_STATUS, &success );      // check for linking errors
+    glGetProgramiv( id, GL_LINK_STATUS, &success );                 // check for linking errors
     if( !success )
     {
         glGetProgramInfoLog( id, lenLog, NULL, infoLog );
@@ -65,6 +66,15 @@ void ShaderProgram::setFloat( const std::string &name, float value ) const
 void ShaderProgram::set4Float( const std::string &name, float value1, float value2, float value3, float value4 ) const
 {
     glUniform4f( glGetUniformLocation( id, name.c_str() ), value1, value2, value3, value4 );
+}
+
+void ShaderProgram::setMat4( const std::string &name, const GLfloat *values )
+{
+    unsigned int transformLoc = glGetUniformLocation( id, name.c_str() );
+    glUniformMatrix4fv( transformLoc,   // 位置值
+                        1,              // 需要修改的矩阵数量
+                        GL_FALSE,       // 是否需要转置矩阵，有些平台使用列向量（列主序），有些平台使用行向量（行主序）。
+                        values );       // 矩阵里元素数据
 }
 
 // build and compile our shader program
