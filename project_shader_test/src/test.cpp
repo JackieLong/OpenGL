@@ -1,10 +1,7 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <iostream>
 #include <fstream>
 #include <functional>
-#include "shader.h"
+#include "project_lib.h"
 
 void framebuffer_size_callback( GLFWwindow *window, int width, int height );
 void initGLFW();
@@ -154,7 +151,7 @@ void renderLoop( GLFWwindow *window, std::function<void()> renderCallback )
 
 void buildVertexData( GLuint *VAO, GLuint *VBO, GLuint *EBO )
 {
-    // 4个顶点绘制两个三角形组成矩形
+    // 3个顶点绘制一个三角形
     float vertices[] =
     {
         // 位置                  // 颜色

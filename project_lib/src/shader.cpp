@@ -5,8 +5,7 @@ using namespace std;
 
 int createAndCompileShader( int shaderFlag, const char *shaderSrc );
 
-/* 顶点着色器文件路径 */
-ShaderProgram::ShaderProgram( const GLchar *vertexPath, const GLchar *fragmentPath )
+ShaderProgram::ShaderProgram( const string &vertexPath, const string &fragmentPath )
 {
     int vertexShader = -1;
     int fragmentShader = -1;
@@ -43,7 +42,7 @@ ShaderProgram::ShaderProgram( const GLchar *vertexPath, const GLchar *fragmentPa
 
 }
 
-void ShaderProgram::use()
+void ShaderProgram::use() const
 {
     glUseProgram( id );
 }
