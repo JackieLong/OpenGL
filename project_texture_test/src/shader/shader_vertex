@@ -1,0 +1,16 @@
+
+#version 330 core
+
+layout (location = 0) in vec3 aPos;			// 顶点数据中的顶点坐标
+layout (location = 1) in vec4 aColor;		// 顶点数据中的颜色值
+layout (location = 2) in vec2 aTexCoord;	// 顶点数据中的纹理坐标
+
+out vec4 ourColor;		// 输出到顶点着色器
+out vec2 TexCoord;		// 输出到顶点着色器
+
+void main()	
+{
+	gl_Position = vec4(aPos, 1.0);
+	ourColor = aColor;
+	TexCoord = aTexCoord;
+};
