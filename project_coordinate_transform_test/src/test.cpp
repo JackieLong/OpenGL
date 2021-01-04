@@ -134,7 +134,7 @@ void initGLFW()
 
 GLFWwindow *createWindow()
 {
-    GLFWwindow *window = glfwCreateWindow( 800, 600,        // 窗口宽高
+    GLFWwindow *window = glfwCreateWindow( ScreenWidth, ScreenHeight,        // 窗口宽高
                                            "LearnOpenGL",   // 窗口名称
                                            NULL, NULL );
     if( window == NULL )
@@ -326,7 +326,7 @@ void loadMatrix( ShaderProgram &shaderProgram )
     // 视图变换矩阵
     glm::mat4 viewMatrix( 1.0f );
     viewMatrix = glm::translate( viewMatrix,
-                                 glm::vec3( 0.0f, 0.0f, -10.0f ) );      //将场景往Z轴负方向移动。
+                                 glm::vec3( 0.0f, 0.0f, -3.0f ) );      //将场景往Z轴负方向移动。
 
     // 投影变换矩阵（透视投影）
     glm::mat4 projectionMatrix( 1.0f );

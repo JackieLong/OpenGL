@@ -1,7 +1,11 @@
-﻿#include <iostream>
-#include <direct.h>
+﻿#ifndef __UTILS_H__
+#define __UTILS_H__
 
-std::string projectDir()
+#include <iostream>
+#include <direct.h>
+#include "shader.h"
+
+static std::string projectDir()
 {
     std::string ret;
     char *tmpProjectDir = _getcwd( NULL, 0 );
@@ -17,3 +21,14 @@ std::string projectDir()
     }
     return ret;
 }
+
+static ShaderProgram loadShaderProgram( const std::string &vertexShaderPath,
+                                        const std::string &fragmentShaderPath )
+{
+    std::string projDir = projectDir();
+    return ShaderProgram( vertexShaderPath,     // 顶点着色器脚本
+                          fragmentShaderPath ); // 片段着色器脚本
+}
+
+
+#endif

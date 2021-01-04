@@ -19,7 +19,7 @@ public:
     void setInt( const std::string &name, int value ) const;
     void setFloat( const std::string &name, float value ) const;
     void set4Float( const std::string &name, float value1, float value2, float value3, float value4 ) const;
-    void setMat4( const std::string &name, const GLfloat* values );
+    void setMat4( const std::string &name, const GLfloat *values );
 
 public:
     unsigned int id;            // 程序ID
