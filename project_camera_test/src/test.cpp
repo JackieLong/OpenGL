@@ -11,6 +11,15 @@
 
 using namespace std;
 
+enum CameraView         // 摄像机视角
+{
+    FIX = 0,                // 一个固定视角
+    ROTATE_Y,               // 绕Y轴旋转视角
+    FREE,                   // 可自由移动/旋转的视角
+    FREE_LOOKAT,            // 手动创建LookAt矩阵
+    FIX_XZ
+};
+
 const int ScreenWidth  = 800;
 const int ScreenHeight = 600;
 
@@ -32,7 +41,8 @@ double    lastY          = ScreenHeight / 2;
 
 double    yaw            = 0.0;
 double    pitch          = 0.0;
-bool      flag           = false;
+
+CameraView cameraView;
 
 void framebuffer_size_callback( GLFWwindow *window, int width, int height );
 void mouse_callback( GLFWwindow *window, double xpos, double ypos );
@@ -49,7 +59,7 @@ void loadVertexData2( GLuint *VAO, GLuint *VBO, GLuint *EBO );
 void loadTextureData( const ShaderProgram & );
 void loadMatrix1( ShaderProgram &shaderProgram );
 void loadMatrix2( ShaderProgram &shaderProgram );
-glm::mat4 createViewMatrix( const int &index = 3 );
+glm::mat4 createViewMatrix( const CameraView &view = CameraView::FREE_LOOKAT );
 
 int main()
 {
@@ -139,6 +149,13 @@ int main()
 // ---------------------------------------------------------------------------------------------------------
 void processInput( GLFWwindow *window )
 {
+    if( glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
+    {
+        glfwSetWindowShouldClose( window, true );
+    }
+
+    if( cameraView == CameraView::FIX ) { return; }
+
     // 本函数是每帧调用，不同设备上，帧率不一样，如果cameraSpeed=一个常量，则不同设备上的摄像机移动速度会差异很大
     // 将cameraSpeed与帧率间隔deltaTime线性关联，可以有效确保不同帧率下的摄像机移动速度差不多。
 
@@ -147,10 +164,7 @@ void processInput( GLFWwindow *window )
     lastFrame = currentFrame;
     double cameraSpeed = 2.5f * deltaTime;
 
-    if( glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
-    {
-        glfwSetWindowShouldClose( window, true );
-    }
+
     if( glfwGetKey( window, GLFW_KEY_W ) == GLFW_PRESS )    // 摄像机向正前方移动
     {
         cameraPos += ( float ) cameraSpeed * cameraFront;   // 位置 + 方向向量*速度，方向向量必须是单位向量，否则不是匀速
@@ -170,11 +184,15 @@ void processInput( GLFWwindow *window )
         // 同上理
         cameraPos += glm::normalize( glm::cross( cameraFront, upVecWorld ) ) * ( float )cameraSpeed;
     }
+    if( cameraView == CameraView::FIX_XZ )
+    {
+        cameraPos.y = cameraPosStart.y;
+    }
 }
 
 void mouse_callback( GLFWwindow *window, double xpos, double ypos )
 {
-    if( !flag )
+    if( cameraView != CameraView::FREE && cameraView != CameraView::FIX_XZ && cameraView != CameraView::FREE_LOOKAT )
     {
         return;
     }
@@ -215,10 +233,6 @@ void mouse_callback( GLFWwindow *window, double xpos, double ypos )
 
 void scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
 {
-    if( !flag )
-    {
-        return;
-    }
     if( fov >= 1.0f && fov <= 45.0f )
     {
         fov -= yoffset;
@@ -530,20 +544,22 @@ void loadMatrix2( ShaderProgram &shaderProgram )
     shaderProgram.setMat4( "projectionMatrix", glm::value_ptr( projectionMatrix ) );
 }
 
-glm::mat4 createViewMatrix( const int &index )
+glm::mat4 createViewMatrix( const CameraView &view/*= CameraView::FIX_XZ */ )
 {
+    cameraView = view;
+
     glm::mat4 viewMatrix( 1.0f );
 
-    switch( index )
+    switch( cameraView )
     {
-        case 0:     // 摄像机角度1：设置一个摄像机视角
+        case CameraView::FIX:     // 摄像机角度1：设置一个摄像机视角
         {
             viewMatrix = glm::lookAt( cameraPos,            // 摄像机位置
                                       cameraTarget,         // 目标位置（摄像机的注视点）
                                       upVecWorld );         // 世界空间的上向量
             break;
         }
-        case 1:     // 摄像机角度2：绕y轴旋转的摄像机视角
+        case CameraView::ROTATE_Y:     // 摄像机角度2：绕y轴旋转的摄像机视角
         {
             float radius = 10.0f;
             float camX   = ( float )sin( glfwGetTime() ) * radius;
@@ -553,9 +569,8 @@ glm::mat4 createViewMatrix( const int &index )
                                       glm::vec3( 0.0f, 1.0f, 0.0f ) );  // 世界空间中的上向量
             break;
         }
-        case 2:     //摄像机角度3：自由移动的摄像机视角
+        case CameraView::FREE:     //摄像机角度3：自由移动的摄像机视角
         {
-            flag = true;
             viewMatrix = glm::lookAt( cameraPos,
                                       cameraPos + cameraFront,          // 摄像机一直朝向它的正前方cameraFront，这好像是一句废话，但是camerFront一直在计算。
                                       upVecWorld );
@@ -564,10 +579,8 @@ glm::mat4 createViewMatrix( const int &index )
             //                          upVecWorld );
             break;
         }
-        case 3:     //摄像机角度3：不用lookat函数，自己手动创建一个LookAt矩阵，达到对lookAt矩阵的掌握。
+        case CameraView::FREE_LOOKAT:     //摄像机角度3：不用lookat函数，自己手动创建一个LookAt矩阵，达到对lookAt矩阵的掌握。
         {
-            flag = true;
-
             glm::vec3 z = glm::normalize( -cameraFront );               // 摄像机的朝向刚好是Z轴的相反方向。朝向一直在计算。
             glm::vec3 x = glm::normalize( glm::cross( upVecWorld, z ) );
             glm::vec3 y = glm::cross( z, x );
@@ -594,6 +607,13 @@ glm::mat4 createViewMatrix( const int &index )
 
             // 因为是列主序矩阵，变换顺序要从右往左看。比如A*B*C*v，对位置v先进行C变换，再B变换，再C变换。
             viewMatrix = rotateMatrix * translateMatrix;
+            break;
+        }
+        case FIX_XZ: //一个真正的FPS摄像机（也就是说不能够随意飞行），你只能够呆在xz平面上。
+        {
+            viewMatrix = glm::lookAt( cameraPos,
+                                      cameraPos + cameraFront,          // 摄像机一直朝向它的正前方cameraFront，这好像是一句废话，但是camerFront一直在计算。
+                                      upVecWorld );
             break;
         }
         default:
