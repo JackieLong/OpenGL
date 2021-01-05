@@ -8,6 +8,7 @@
 class ShaderProgram
 {
 public:
+    ShaderProgram();
     ShaderProgram( const std::string &vertexPath,       // 顶点着色器文件路径
                    const std::string &fragmentPath );   // 片元着色器文件路径
 

@@ -43,6 +43,12 @@ ShaderProgram::ShaderProgram( const string &vertexPath, const string &fragmentPa
 
 }
 
+ShaderProgram::ShaderProgram()
+    : id( -1 )
+{
+
+}
+
 void ShaderProgram::use() const
 {
     glUseProgram( id );
