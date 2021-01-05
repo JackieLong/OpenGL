@@ -21,9 +21,6 @@
     <ClCompile Include="src\test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Camera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shader\shader_fragment">
@@ -40,7 +37,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Camera.h">
+    <ClInclude Include="src\other.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
