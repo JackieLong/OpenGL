@@ -11,43 +11,16 @@
 
 using namespace std;
 
-
-enum CameraView         // 摄像机视角
-{
-    FIX = 0,                // 一个固定视角
-    ROTATE_Y,               // 绕Y轴旋转视角
-    FREE,                   // 可自由移动/旋转的视角
-    FREE_LOOKAT,            // 手动创建LookAt矩阵
-    FIX_XZ
-};
-
-const int ScreenWidth = 800;
+const int ScreenWidth  = 800;
 const int ScreenHeight = 600;
 
-glm::vec3 cameraPosStart = glm::vec3( 1.0f, 2.0f, 7.0f );    // 摄像机的初始位置
-glm::vec3 cameraPos = cameraPosStart;                   // 摄像机的位置
-glm::vec3 cameraTarget = glm::vec3( 0.0f, 0.0f, 0.0f );    // 摄像机注视点
+double    deltaTime    = 0.0;       // 当前帧与上一帧的时间差
+double    lastFrame    = 0.0;       // 上一帧的时间
 
-glm::vec3 cameraFront = glm::vec3( 0.0f, 0.0f, -1.0f );   // 摄像机的朝向，基向量，其实就是z轴基向量的反方向，一直在动态计算
-
-glm::vec3 upVecWorld = glm::vec3( 0.0f, 1.0f, 0.0f );    // 世界坐标中的向上向量
-
-double    deltaTime = 0.0;                              // 当前帧与上一帧的时间差
-double    lastFrame = 0.0;                              // 上一帧的时间
-double    fov = 45.0;                             // 视角广度，field of view
-bool      firstMouse = true;
-
-double    lastX = ScreenWidth / 2;
-double    lastY = ScreenHeight / 2;
-
-double    yaw = -90.0;
-double    pitch = 0.0;
-
-CameraView cameraView;
-
+Camera    *pCamera     = nullptr;
 
 void framebuffer_size_callback( GLFWwindow *window, int width, int height );
-void mouse_callback( GLFWwindow *window, double xpos, double ypos );
+void mouse_move_callback( GLFWwindow *window, double xpos, double ypos );
 void scroll_callback( GLFWwindow *window, double xoffset, double yoffset );
 
 void initGLFW();
@@ -76,6 +49,12 @@ int main()
     loadGLFuncPointer();                                        // glad: load all OpenGL function pointers
 
     initGLState();
+
+    pCamera = new Camera( glm::vec3( 1.0f, 1.0f, 5.0f ),            // 摄像机的初始位置
+                          glm::vec3( 0.5f, 0.5f, 0.0f ),            // 摄像机注视点
+                          glm::vec3( 0.0f, 1.0f, 0.0f ),            // 世界坐标中的向上向量
+                          -90.f,                                    // Yaw
+                          0.0f );                                   // Pitch
 
     // build and compile our shader program
     ShaderProgram shaderProgram = loadShaderProgram( projectDir() + "\\src\\shader\\shader_vertex",
@@ -141,36 +120,13 @@ void processInput( GLFWwindow *window )
         glfwSetWindowShouldClose( window, true );
     }
 
-    // 本函数是每帧调用，不同设备上，帧率不一样，如果cameraSpeed=一个常量，则不同设备上的摄像机移动速度会差异很大
-    // 将cameraSpeed与帧率间隔deltaTime线性关联，可以有效确保不同帧率下的摄像机移动速度差不多。
-
-    double currentFrame = glfwGetTime();
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
-    double cameraSpeed = 2.5f * deltaTime;
-
-    if( glfwGetKey( window, GLFW_KEY_W ) == GLFW_PRESS )    // 摄像机向正前方移动
-    {
-        cameraPos += ( float ) cameraSpeed * cameraFront;   // 位置 + 方向向量*速度，方向向量必须是单位向量，否则不是匀速
-    }
-    if( glfwGetKey( window, GLFW_KEY_S ) == GLFW_PRESS )    // 摄像机向正后方移动
-    {
-        cameraPos -= ( float ) cameraSpeed * cameraFront;   // 位置 - 方向向量*速度，方向向量必须是单位向量，否则不是匀速
-    }
-    if( glfwGetKey( window, GLFW_KEY_A ) == GLFW_PRESS )    // 摄像机向正左方移动
-    {
-        // 第一步：先通过z、y轴向量叉乘得到x轴向量（注意标准化，否则不是匀速）
-        // 第二步：同上理，位置 - 摄像机z轴方向向量*速度
-        cameraPos -= glm::normalize( glm::cross( cameraFront, upVecWorld ) ) * ( float ) cameraSpeed;
-    }
-    if( glfwGetKey( window, GLFW_KEY_D ) == GLFW_PRESS )    // 摄像机向正右方移动
-    {
-        // 同上理
-        cameraPos += glm::normalize( glm::cross( cameraFront, upVecWorld ) ) * ( float ) cameraSpeed;
-    }
+    pCamera->processKeyboard( window, ( float ) deltaTime );
 }
 
-void mouse_callback( GLFWwindow *window, double xpos, double ypos )
+bool   firstMouse = true;
+double lastX      = 0.0;
+double lastY      = 0.0;
+void mouse_move_callback( GLFWwindow *window, double xpos, double ypos )
 {
     if( firstMouse )
     {
@@ -178,47 +134,17 @@ void mouse_callback( GLFWwindow *window, double xpos, double ypos )
         lastY = ypos;
         firstMouse = false;
     }
-    double xoffset = xpos - lastX;
-    double yoffset = lastY - ypos;
+
+    pCamera->processMouseMovement( float( xpos - lastX ), float( lastY - ypos ) );
+
     lastX = xpos;
     lastY = ypos;
-
-    double sensitivity = 0.05f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    if( pitch > 89.0f )
-    {
-        pitch = 89.0f;
-    }
-    if( pitch < -89.0f )
-    {
-        pitch = -89.0f;
-    }
-
-    cameraFront = glm::normalize( glm::vec3(
-            cos( glm::radians( yaw ) ) * cos( glm::radians( pitch ) ),
-            sin( glm::radians( pitch ) ),
-            sin( glm::radians( yaw ) ) * cos( glm::radians( pitch ) ) ) );
 }
+
 
 void scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
 {
-    if( fov >= 1.0f && fov <= 45.0f )
-    {
-        fov -= yoffset;
-    }
-    if( fov <= 1.0f )
-    {
-        fov = 1.0f;
-    }
-    if( fov >= 45.0f )
-    {
-        fov = 45.0f;
-    }
+    pCamera->processMouseScroll( window, xoffset, yoffset );
 }
 
 
@@ -263,7 +189,7 @@ GLFWwindow *createWindow()
         glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );          // 隐藏光标，并捕捉。
         glfwMakeContextCurrent( window );                                       // 设置当前线程的上下文为window的上下文。
         glfwSetFramebufferSizeCallback( window, framebuffer_size_callback );    // 窗口大小改变回调
-        glfwSetCursorPosCallback( window, mouse_callback );                     // 鼠标移动触发回调
+        glfwSetCursorPosCallback( window, mouse_move_callback );                     // 鼠标移动触发回调
         glfwSetScrollCallback( window, scroll_callback );                       // 鼠标滚轮回调
     }
 
@@ -290,8 +216,14 @@ void initGLState()
 
 void renderLoop( GLFWwindow *window, function<void()> renderCallback )
 {
+    double currentFrame;
+
     while( !glfwWindowShouldClose( window ) )
     {
+        currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         processInput( window );                     // 处理输入：键盘、鼠标事件等。
 
         if( renderCallback != nullptr )             // render loop
@@ -556,14 +488,11 @@ void loadMatrix1( ShaderProgram &shaderProgram )
     glm::mat4 modelMatrix( 1.0f );
 
     // 视图变换矩阵
-    glm::mat4 viewMatrix( 1.0f );
-    viewMatrix = glm::lookAt( cameraPos,
-                              cameraPos + cameraFront,          // 摄像机一直朝向它的正前方cameraFront，这好像是一句废话，但是camerFront一直在计算。
-                              upVecWorld );
+    glm::mat4 viewMatrix = pCamera->getViewMatrix();
 
     // 投影变换矩阵（透视投影）
     glm::mat4 projectionMatrix( 1.0f );
-    projectionMatrix = glm::perspective( glm::radians( ( float ) 45.0f ),          // 就是FOV，field of view，视角广度
+    projectionMatrix = glm::perspective( glm::radians( ( float ) pCamera->fov() ),          // 就是FOV，field of view，视角广度
                                          ( float )ScreenWidth / ScreenHeight,      // aspectRatio，宽高比
                                          0.1f,                                     // near plane，近平面位置
                                          100.0f );                                 // far plane，远平面位置
@@ -581,14 +510,11 @@ void loadMatrix2( ShaderProgram &shaderProgram )
     modelMatrix = glm::translate( modelMatrix, glm::vec3( 2.0f, 2.0f, 2.0f ) );
     modelMatrix = glm::scale( modelMatrix, glm::vec3( 0.3f ) );
 
-    glm::mat4 viewMatrix( 1.0f );
-    viewMatrix = glm::lookAt( cameraPos,
-                              cameraPos + cameraFront,          // 摄像机一直朝向它的正前方cameraFront，这好像是一句废话，但是camerFront一直在计算。
-                              upVecWorld );
+    glm::mat4 viewMatrix = pCamera->getViewMatrix();
 
     // 投影变换矩阵（透视投影）
     glm::mat4 projectionMatrix( 1.0f );
-    projectionMatrix = glm::perspective( glm::radians( ( float ) fov ),            // 就是FOV，field of view，视角广度
+    projectionMatrix = glm::perspective( glm::radians( ( float ) pCamera->fov() ),            // 就是FOV，field of view，视角广度
                                          ( float ) ScreenWidth / ScreenHeight,     // aspectRatio，宽高比
                                          0.1f,                                     // near plane，近平面位置
                                          100.0f );                                 // far plane，远平面位置

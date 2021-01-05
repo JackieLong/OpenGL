@@ -39,15 +39,15 @@ public:
 
     // constructor with vectors
     Camera( glm::vec3 position,
-            glm::vec3 up,
             glm::vec3 target,
+            glm::vec3 up,
             float yaw,
             float pitch );
 
     // constructor with scalar values
     Camera( float posX, float posY, float posZ,
-            float upX, float upY, float upZ,
             float targetX, float targetY, float targetZ,
+            float upX, float upY, float upZ,
             float yaw,
             float pitch );
 

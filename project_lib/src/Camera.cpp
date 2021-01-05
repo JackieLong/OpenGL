@@ -1,8 +1,8 @@
 #include "Camera.h"
 
 Camera::Camera( glm::vec3 position,
-                glm::vec3 up,
                 glm::vec3 target,
+                glm::vec3 up,
                 float     yaw,
                 float     pitch )
     : mFront( glm::vec3( 0.0f, 0.0f, -1.0f ) ),
@@ -20,8 +20,8 @@ Camera::Camera( glm::vec3 position,
 }
 
 Camera::Camera( float posX, float posY, float posZ,
-                float upX,  float upY, float  upZ,
                 float targetX, float targetY, float targetZ,
+                float upX,  float upY, float  upZ,
                 float yaw, float pitch )
     : mFront( glm::vec3( 0.0f, 0.0f, -1.0f ) ),
       mMovSpeed( SPEED ),

@@ -19,8 +19,8 @@ int main()
                                mouse_scroll_callback );             // 鼠标滚轮回调
 
     pCamera = new Camera( glm::vec3( 0.0f, 0.0f, 3.0f ),            // 摄像机的初始位置
-                          glm::vec3( 0.0f, 1.0f, 0.0f ),            // 摄像机注视点
-                          glm::vec3( 0.0f, 0.0f, 0.0f ),            // 世界坐标中的向上向量
+                          glm::vec3( 0.0f, 0.0f, 0.0f ),            // 摄像机注视点
+                          glm::vec3( 0.0f, 1.0f, 0.0f ),            // 世界坐标中的向上向量
                           -90.f,                                    // Yaw
                           0.0f );                                   // Pitch
 
@@ -114,13 +114,11 @@ void mouse_scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
 void renderLoop( GLFWwindow *window, function<void()> renderCallback )
 {
     double currentFrame;
-    double cameraSpeed;
     while( !glfwWindowShouldClose( window ) )
     {
         currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        cameraSpeed = 2.5f * deltaTime;
 
         processInput( window );                     // 处理输入：键盘、鼠标事件等。
 
