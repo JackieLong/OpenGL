@@ -125,6 +125,9 @@
     <None Include="src\shader\shader_fragment_light" />
     <None Include="src\shader\shader_vertex_light" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\other.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
