@@ -14,14 +14,11 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="源文件\shader">
-      <UniqueIdentifier>{c9f8d3c9-b1e9-4932-adb0-8779cdd72d1c}</UniqueIdentifier>
+      <UniqueIdentifier>{fcec77a6-9566-4d74-b7c5-4b18005b4dad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\test.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Camera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,10 +35,11 @@
     <None Include="src\shader\shader_vertex_coord">
       <Filter>源文件\shader</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Camera.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
+    <None Include="src\shader\shader_fragment_light">
+      <Filter>源文件\shader</Filter>
+    </None>
+    <None Include="src\shader\shader_vertex_light">
+      <Filter>源文件\shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

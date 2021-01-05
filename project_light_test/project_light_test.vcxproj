@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7B9B9427-378D-47C1-9947-DD9E4323DB06}</ProjectGuid>
-    <RootNamespace>project_camera_test</RootNamespace>
+    <ProjectGuid>{CD04F9FA-1AAA-4FD9-801A-D245AC359B43}</ProjectGuid>
+    <RootNamespace>project_light_test</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -115,17 +115,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shader\shader_fragment" />
     <None Include="src\shader\shader_fragment_coord" />
-    <None Include="src\shader\shader_vertex" />
     <None Include="src\shader\shader_vertex_coord" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Camera.h" />
+    <None Include="src\shader\shader_fragment" />
+    <None Include="src\shader\shader_vertex" />
+    <None Include="src\shader\shader_fragment_light" />
+    <None Include="src\shader\shader_vertex_light" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

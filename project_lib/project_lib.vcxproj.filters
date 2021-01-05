@@ -21,25 +21,19 @@
     <ClCompile Include="src\shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Camera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\project_lib.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\shader.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stb_image.h">
-      <Filter>源文件</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\utils.h">
-      <Filter>源文件</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Camera.h">
-      <Filter>源文件</Filter>
+    <ClInclude Include="src\project_lib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb_image.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

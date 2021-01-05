@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Camera *pCamera = nullptr;
+Camera *pCamera  = nullptr;
 double deltaTime = 0.0;         // 当前帧与上一帧的时间差
 double lastFrame = 0.0;         // 上一帧的时间
 
@@ -89,8 +89,8 @@ void processInput( GLFWwindow *window )
 }
 
 bool   firstMouse = true;
-double lastX = 0.0;
-double lastY = 0.0;
+double lastX      = 0.0;
+double lastY      = 0.0;
 void mouse_move_callback( GLFWwindow *window, double xpos, double ypos )
 {
     if( firstMouse )
