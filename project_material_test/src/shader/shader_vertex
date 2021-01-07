@@ -1,0 +1,21 @@
+
+#version 330 core
+
+layout (location = 0) in vec3 aPos;			// 顶点坐标
+layout (location = 1) in vec3 aNormal;		// 顶点法向量
+
+uniform mat4 modelMatrix;					// 模型变换矩阵
+uniform mat4 viewMatrix;					// 视图变换矩阵
+uniform mat4 projectionMatrix;				// 投影变换矩阵
+
+out     vec3 normal;						// 单位法向量
+out     vec3 fragPos;						// 顶点在世界坐标系中的位置
+
+void main()	
+{
+	// 如果是列向量则按以下乘法顺序，OpenGL使用的是列向量。
+	gl_Position  = projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
+
+	normal       = mat3(transpose(inverse(modelMatrix))) * aNormal;
+	fragPos      = vec3(modelMatrix * vec4(aPos,1.0));
+};
