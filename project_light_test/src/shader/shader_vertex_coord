@@ -7,7 +7,7 @@ uniform mat4 modelMatrix;					// 模型变换矩阵
 uniform mat4 viewMatrix;					// 视图变换矩阵
 uniform mat4 projectionMatrix;				// 投影变换矩阵
 
-out vec4 outColor;
+out vec3 outColor;
 
 void main()	
 {
@@ -15,12 +15,12 @@ void main()
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);	
 
 	if(aPos.x != 0.0){
-		outColor = vec4(1.0, 0.0, 0.0, 0.0);
+		outColor = vec3(1.0, 0.0, 0.0);	// x轴红色
 	}
 	else if(aPos.y != 0.0){
-		outColor = vec4(0.0, 1.0, 0.0, 0.0);
+		outColor = vec3(0.0, 1.0, 0.0);	// y轴绿色
 	}
 	else{
-		outColor = vec4(0.0, 0.0, 1.0, 0.0);
+		outColor = vec3(0.0, 0.0, 1.0);	// z轴蓝色
 	}
 };

@@ -13,14 +13,22 @@
 
 using namespace std;
 
-const int ScreenWidth = 800;
+const int ScreenWidth  = 800;
 const int ScreenHeight = 600;
+
+Camera *fuckCamera     = nullptr;
+double deltaTime       = 0.0;         // 当前帧与上一帧的时间差
+double lastFrame       = 0.0;         // 上一帧的时间
 
 ShaderProgram shaderProgram, shaderProgramCoord, shaderProgramLight;
 
 GLuint VAO = 0, VAO1 = 0, VAO2 = 0;           // VBO顶点缓冲对象，VAO顶点数组对象，EBO索引缓冲对象
 GLuint VBO = 0, VBO1 = 0, VBO2 = 0;
 GLuint EBO = 0, EBO1 = 0, EBO2 = 0;
+
+void renderLoop( GLFWwindow *window, function<void()> renderCallback );
+void mouse_move_callback( GLFWwindow *window, double xpos, double ypos );
+void mouse_scroll_callback( GLFWwindow *window, double xoffset, double yoffset );
 
 void initGLFW()
 {
@@ -100,58 +108,55 @@ void loadTextureData( const ShaderProgram &shaderProgram )
     stbi_image_free( data );                // 纹理数据已经上传到显存中，内存中的数据可以删除了。
 }
 
-void loadVertexData1( GLuint *VAO, GLuint *VBO )
+void loadVertexDataObject( GLuint *VAO, GLuint *VBO )
 {
     // 6个顶点（6个面 x 每个面有2个三角形组成 x 每个三角形有3个顶点）
     // 这里没有使用索引缓冲对象
     float vertices[] =
     {
-        // 顶点坐标          // 纹理坐标
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, 0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        // 物体顶点坐标           // 顶点的单位法向量
+        -0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
+        0.5f, -0.5f, -0.5f,      0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,      0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,      0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,     0.0f,  0.0f, -1.0f,
 
-        -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f, 0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,     0.0f,  0.0f,  1.0f,
+        0.5f, -0.5f,  0.5f,      0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,      0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,      0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,     0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,     0.0f,  0.0f,  1.0f,
 
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
 
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,     1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,     1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,     1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,   1.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,   1.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,   1.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f,   0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,     0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,     0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
 
-        -0.5f, 0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, 0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f,  0.0f, 1.0f,
-
+        -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,     0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f
     };
-    // OpenGL规定：顶点坐标（0.0，0.0）在中心点，而纹理坐标（0.0，0.0）在左下角
-    // 在常见图片格式中，（0.0，0.0）可能是在图片左上角，因此可能导致图片倒转。
 
     glGenVertexArrays( 1, VAO );
     glBindVertexArray( *VAO );
@@ -164,14 +169,14 @@ void loadVertexData1( GLuint *VAO, GLuint *VBO )
                            3,                       // 顶点属性的分量数量（number of component）
                            GL_FLOAT,                // 分量数据类型（data type of component）
                            GL_FALSE,                // 数据是否需要被标准化
-                           5 * sizeof( float ),     // 步长Stride，属性间隔，注意是两个属性值相同位置的间隔，不是首尾间隔。
+                           6 * sizeof( float ),     // 步长Stride，属性间隔，注意是两个属性值相同位置的间隔，不是首尾间隔。
                            ( void * ) 0 );          // 数据在缓冲中起始位置的偏移量
 
-    glVertexAttribPointer( 1,                       // 顶点属性（纹理坐标）位置值
-                           2,
+    glVertexAttribPointer( 1,                       // 顶点属性（法向量）位置值
+                           3,
                            GL_FLOAT,
                            GL_FALSE,
-                           5 * sizeof( float ),
+                           6 * sizeof( float ),
                            ( void * )( 3 * sizeof( float ) ) );
 
     glEnableVertexAttribArray( 0 );     // 顶点属性配置默认是关闭的，要记得打开，0对应layout(location=0)顶点属性
@@ -180,7 +185,7 @@ void loadVertexData1( GLuint *VAO, GLuint *VBO )
     glBindVertexArray( 0 );
 }
 
-void loadVertexData2( GLuint *VAO, GLuint *VBO )
+void loadVertexDataCoord( GLuint *VAO, GLuint *VBO )
 {
     float vertices[] =          // 绘制坐标系的顶点
     {
@@ -217,7 +222,7 @@ void loadVertexData2( GLuint *VAO, GLuint *VBO )
     glBindVertexArray( 0 );
 }
 
-void loadVertexData3( GLuint *VAO, GLuint *VBO )
+void loadVertexDataLight( GLuint *VAO, GLuint *VBO )
 {
     // 6个顶点（6个面 x 每个面有2个三角形组成 x 每个三角形有3个顶点）
     // 这里没有使用索引缓冲对象
@@ -297,9 +302,9 @@ void loadVertexData3( GLuint *VAO, GLuint *VBO )
     glBindVertexArray( 0 );
 }
 
-GLFWwindow *init( GLFWcursorposfun mouse_move_callback,
-                  GLFWscrollfun    mouse_scroll_callback )
+GLFWwindow *init( Camera *camera )
 {
+    fuckCamera = camera;
     initGLFW();                                                     // 初始化GLFW
 
     GLFWwindow *window = glfwCreateWindow( ScreenWidth, ScreenHeight,        // 窗口宽高
@@ -345,13 +350,73 @@ GLFWwindow *init( GLFWcursorposfun mouse_move_callback,
                                             projectDir() + "\\src\\shader\\shader_fragment_light" );
 
 
-    loadVertexData1( &VAO, &VBO );                              // 笑脸立方体顶点数据
-    loadVertexData2( &VAO1, &VBO1 );                            // 坐标轴顶点数据
-    loadVertexData3( &VAO2, &VBO2 );                            // 坐标轴顶点数据
+    loadVertexDataObject( &VAO, &VBO );                              // 笑脸立方体顶点数据
+    loadVertexDataCoord( &VAO1, &VBO1 );                            // 坐标轴顶点数据
+    loadVertexDataLight( &VAO2, &VBO2 );                            // 坐标轴顶点数据
 
     loadTextureData( shaderProgram );                           // 加载纹理数据到显存中
 
     return window;
+}
+
+bool   firstMouse = true;
+double lastX = 0.0;
+double lastY = 0.0;
+void mouse_move_callback( GLFWwindow *window, double xpos, double ypos )
+{
+    if( firstMouse )
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    fuckCamera->processMouseMovement( float( xpos - lastX ), float( lastY - ypos ) );
+
+    lastX = xpos;
+    lastY = ypos;
+}
+
+void mouse_scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
+{
+    fuckCamera->processMouseScroll( window, xoffset, yoffset );
+}
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+void processInput( GLFWwindow *window )
+{
+    if( glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
+    {
+        glfwSetWindowShouldClose( window, true );
+    }
+
+    fuckCamera->processKeyboard( window, ( float ) deltaTime );
+}
+
+void renderLoop( GLFWwindow *window, function<void()> renderCallback )
+{
+    double currentFrame;
+
+    while( !glfwWindowShouldClose( window ) )
+    {
+        currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        processInput( window );                     // 处理输入：键盘、鼠标事件等。
+
+        if( renderCallback != nullptr )             // render loop
+        {
+            renderCallback();
+        }
+
+        glfwSwapBuffers( window );                  // 双缓冲
+
+        // IO轮询，检查有没有触发什么事件（keys pressed/released, mouse moved etc.）,
+        // 并调用对应的回调函数（可以通过回调方法手动设置）,更新窗口状态，
+        glfwPollEvents();
+    }
 }
 
 #endif

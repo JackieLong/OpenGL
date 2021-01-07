@@ -1,13 +1,93 @@
 #version 330 core
 
-in vec2 TexCoord;
-
-uniform sampler2D texture0;
-
 out vec4 FragColor;
+
+uniform vec3 lightColor;	// 光源颜色
+uniform vec3 objectColor;	// 物体本身颜色(珊瑚红)
+uniform vec3 lightPos;		// 光源位置
+uniform vec3 viewPos;		// 观察点位置
+uniform int caculateType;	// 
+
+in vec3 normal;				// 顶点法向量
+in vec3 fragPos;			// 顶点世界坐标
+
+in vec3 lightPosView;
+in vec3 normalView;
+in vec3 fragPosView;
+in vec3 lightColorInVS;
 
 void main()
 {
-	// FragColor = texture(texture0, TexCoord);
-	FragColor = vec4(1.0f, 0.5f, 0.31f, 1.0f);
+	float ambientFactor    = 0.1;							// 常量环境因子
+	float specularStrength = 0.5;							// 镜面强度
+	int   Shininess        = 32;							// 反光度，越高反射光能力越强，高光点越小
+	
+	if(caculateType == 1)	// 在世界坐标空间计算光照
+	{
+		// ***************计算环境光照分量*******************************************
+		//
+		vec3 ambient = ambientFactor * lightColor;							
+
+		// ***************计算漫反射光照分量*****************************************
+		//
+		vec3 diff = max(										// 忽略负值
+						dot(									// 单位向量点乘：计算法向量和光照之间的余弦值
+							normalize( normal ),				// 顶点单位法向量
+							normalize( lightPos - fragPos)),	// 光照向量：光源和顶点组成的向量
+						 0.0)
+					*lightColor;
+	
+		// ***************计算镜面反射光照分量***************************************
+		//
+		float spec = pow(
+						max(									// 忽略负值
+							dot(								// 单位向量点乘求余弦：反射向量与眼睛到顶点的向量
+								normalize(						// 光照反射向量的基向量
+									reflect(					// 计算反射向量（光的反射）
+											fragPos - lightPos,	// 入射向量（光照向量）：顶点坐标 - 光源位置
+											normal)),			// 顶点法向量
+								normalize(viewPos - fragPos)),	// 顶点到观察点（眼睛）的基向量
+							0.0),
+						Shininess);								// 反光度的作用
+		vec3 specular = specularStrength * spec * lightColor;
+
+		// 计算最终颜色
+		FragColor = vec4((ambient + diff + specular) * objectColor , 1.0);
+	}
+	else if(caculateType == 2)		// 在观察空间计算光照
+	{
+		// ***************计算环境光照分量*******************************************
+		//
+		vec3 ambient = ambientFactor * lightColor;							
+
+		// ***************计算漫反射光照分量*****************************************
+		//
+		vec3 diff = max(										// 忽略负值
+						dot(									// 单位向量点乘：计算法向量和光照之间的余弦值
+							normalize( normalView ),				// 顶点单位法向量
+							normalize( lightPosView - fragPosView)),	// 光照向量：光源和顶点组成的向量
+						 0.0)
+					*lightColor;
+	
+		// ***************计算镜面反射光照分量***************************************
+		//
+		float spec = pow(
+						max(									// 忽略负值
+							dot(								// 单位向量点乘求余弦：反射向量与眼睛到顶点的向量
+								normalize(						// 光照反射向量的基向量
+									reflect(					// 计算反射向量（光的反射）
+											fragPosView - lightPosView,	// 入射向量（光照向量）：顶点坐标 - 光源位置
+											normalView)),			// 顶点法向量
+								normalize( - fragPosView)),	// 顶点到观察点（眼睛）的基向量
+							0.0),
+						Shininess);								// 反光度的作用
+		vec3 specular = specularStrength * spec * lightColor;
+
+		// 计算最终颜色
+		FragColor = vec4((ambient + diff + specular) * objectColor , 1.0);
+	}
+	else if(caculateType == 3){		// Gouraud着色(Gouraud Shading)：在顶点着色器中计算光照
+									// 冯氏着色(Phong Shading)：在片段着色器中计算光照
+		FragColor = vec4(lightColorInVS * objectColor , 1.0);
+	}
 };

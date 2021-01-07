@@ -2,17 +2,13 @@
 #version 330 core
 
 layout (location = 0) in vec3 aPos;			// 顶点数据中的顶点坐标
-layout (location = 0) in vec3 aTexCoord;
 
 uniform mat4 modelMatrix;					// 模型变换矩阵
 uniform mat4 viewMatrix;					// 视图变换矩阵
 uniform mat4 projectionMatrix;				// 投影变换矩阵
 
-out vec4 outColor;
-
 void main()	
 {
 	// 如果是列向量则按以下乘法顺序，OpenGL使用的是列向量。
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);	
-	outColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 };

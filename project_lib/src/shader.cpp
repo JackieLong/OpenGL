@@ -1,4 +1,5 @@
 ﻿#include <fstream>
+#include "glm/glm.hpp"
 
 #include "shader.h"
 
@@ -74,13 +75,58 @@ void ShaderProgram::set4Float( const std::string &name, float value1, float valu
     glUniform4f( glGetUniformLocation( id, name.c_str() ), value1, value2, value3, value4 );
 }
 
-void ShaderProgram::setMat4( const std::string &name, const GLfloat *values )
+void ShaderProgram::setVec2( const std::string &name, const glm::vec2 &value ) const
+{
+    glUniform2fv( glGetUniformLocation( id, name.c_str() ), 1, &value[0] );
+}
+
+void ShaderProgram::setVec2( const std::string &name, float x, float y ) const
+{
+    glUniform2f( glGetUniformLocation( id, name.c_str() ), x, y );
+}
+
+void ShaderProgram::setVec3( const std::string &name, const  glm::vec3 &value ) const
+{
+    glUniform3fv( glGetUniformLocation( id, name.c_str() ), 1, &value[0] );
+}
+
+void ShaderProgram::setVec3( const std::string &name, float x, float y, float z ) const
+{
+    glUniform3f( glGetUniformLocation( id, name.c_str() ), x, y, z );
+}
+
+void ShaderProgram::setVec4( const std::string &name, const glm::vec4 &value ) const
+{
+    glUniform4fv( glGetUniformLocation( id, name.c_str() ), 1, &value[0] );
+}
+
+void ShaderProgram::setVec4( const std::string &name, float x, float y, float z, float w )
+{
+    glUniform4f( glGetUniformLocation( id, name.c_str() ), x, y, z, w );
+}
+
+void ShaderProgram::setMat2( const std::string &name, const glm::mat2 &mat ) const
+{
+    glUniformMatrix2fv( glGetUniformLocation( id, name.c_str() ), 1, GL_FALSE, &mat[0][0] );
+}
+
+void ShaderProgram::setMat3( const std::string &name, const glm::mat3 &mat ) const
+{
+    glUniformMatrix3fv( glGetUniformLocation( id, name.c_str() ), 1, GL_FALSE, &mat[0][0] );
+}
+
+void ShaderProgram::setMat4( const std::string &name, const GLfloat *values ) const
 {
     unsigned int transformLoc = glGetUniformLocation( id, name.c_str() );
     glUniformMatrix4fv( transformLoc,   // 位置值
                         1,              // 需要修改的矩阵数量
                         GL_FALSE,       // 是否需要转置矩阵，有些平台使用列向量（列主序），有些平台使用行向量（行主序）。
                         values );       // 矩阵里元素数据
+}
+
+void ShaderProgram::setMat4( const std::string &name, const glm::mat4 &mat ) const
+{
+    glUniformMatrix4fv( glGetUniformLocation( id, name.c_str() ), 1, GL_FALSE, &mat[0][0] );
 }
 
 // build and compile our shader program

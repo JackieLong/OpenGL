@@ -124,6 +124,11 @@ float Camera::fov() const
     return mFOV;
 }
 
+glm::vec3 Camera::pos() const
+{
+    return mPos;
+}
+
 void Camera::processKeyboard( GLFWwindow *window, float deltaTime )
 {
     if( mViewType == CameraView::FIX )
@@ -148,6 +153,14 @@ void Camera::processKeyboard( GLFWwindow *window, float deltaTime )
     if( glfwGetKey( window, GLFW_KEY_D ) == GLFW_PRESS )
     {
         mPos += mRight * velocity;
+    }
+    if( glfwGetKey( window, GLFW_KEY_Q ) == GLFW_PRESS )
+    {
+        mPos += glm::vec3( 0.0f, 1.0f, 0.0f ) * velocity;
+    }
+    if( glfwGetKey( window, GLFW_KEY_E ) == GLFW_PRESS )
+    {
+        mPos += glm::vec3( 0.0f, -1.0f, 0.0f ) * velocity;
     }
 }
 
