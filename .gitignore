@@ -22,3 +22,5 @@
 /project_camera_test/src/test.cpp
 /project_lighting_map_test/Debug
 /project_material_test/Debug
+/project_light_cast_test/Debug
+/project_multi_lights_test/Debug
