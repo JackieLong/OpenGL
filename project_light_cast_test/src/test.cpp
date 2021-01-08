@@ -93,32 +93,32 @@ int main()
         shaderProgram.setVec3( "pointLights[0].diffuse", 0.8f, 0.8f, 0.8f );
         shaderProgram.setVec3( "pointLights[0].specular", 1.0f, 1.0f, 1.0f );
         shaderProgram.setFloat( "pointLights[0].constant", 1.0f );
-        shaderProgram.setFloat( "pointLights[0].linear", 0.09 );
-        shaderProgram.setFloat( "pointLights[0].quadratic", 0.032 );
+        shaderProgram.setFloat( "pointLights[0].linear", 0.09f );
+        shaderProgram.setFloat( "pointLights[0].quadratic", 0.032f );
         // point light 2
         shaderProgram.setVec3( "pointLights[1].pos", pointLightPositions[1] );
         shaderProgram.setVec3( "pointLights[1].ambient", 0.05f, 0.05f, 0.05f );
         shaderProgram.setVec3( "pointLights[1].diffuse", 0.8f, 0.8f, 0.8f );
         shaderProgram.setVec3( "pointLights[1].specular", 1.0f, 1.0f, 1.0f );
         shaderProgram.setFloat( "pointLights[1].constant", 1.0f );
-        shaderProgram.setFloat( "pointLights[1].linear", 0.09 );
-        shaderProgram.setFloat( "pointLights[1].quadratic", 0.032 );
+        shaderProgram.setFloat( "pointLights[1].linear", 0.09f );
+        shaderProgram.setFloat( "pointLights[1].quadratic", 0.032f );
         // point light 3
         shaderProgram.setVec3( "pointLights[2].pos", pointLightPositions[2] );
         shaderProgram.setVec3( "pointLights[2].ambient", 0.05f, 0.05f, 0.05f );
         shaderProgram.setVec3( "pointLights[2].diffuse", 0.8f, 0.8f, 0.8f );
         shaderProgram.setVec3( "pointLights[2].specular", 1.0f, 1.0f, 1.0f );
         shaderProgram.setFloat( "pointLights[2].constant", 1.0f );
-        shaderProgram.setFloat( "pointLights[2].linear", 0.09 );
-        shaderProgram.setFloat( "pointLights[2].quadratic", 0.032 );
+        shaderProgram.setFloat( "pointLights[2].linear", 0.09f );
+        shaderProgram.setFloat( "pointLights[2].quadratic", 0.032f );
         // point light 4
         shaderProgram.setVec3( "pointLights[3].pos", pointLightPositions[3] );
         shaderProgram.setVec3( "pointLights[3].ambient", 0.05f, 0.05f, 0.05f );
         shaderProgram.setVec3( "pointLights[3].diffuse", 0.8f, 0.8f, 0.8f );
         shaderProgram.setVec3( "pointLights[3].specular", 1.0f, 1.0f, 1.0f );
         shaderProgram.setFloat( "pointLights[3].constant", 1.0f );
-        shaderProgram.setFloat( "pointLights[3].linear", 0.09 );
-        shaderProgram.setFloat( "pointLights[3].quadratic", 0.032 );
+        shaderProgram.setFloat( "pointLights[3].linear", 0.09f );
+        shaderProgram.setFloat( "pointLights[3].quadratic", 0.032f );
 
 
         shaderProgram.setVec3( "spotLight.pos", pCamera->pos() );
