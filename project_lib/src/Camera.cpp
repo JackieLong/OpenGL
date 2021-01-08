@@ -129,6 +129,11 @@ glm::vec3 Camera::pos() const
     return mPos;
 }
 
+glm::vec3 Camera::front() const
+{
+    return mFront;
+}
+
 void Camera::processKeyboard( GLFWwindow *window, float deltaTime )
 {
     if( mViewType == CameraView::FIX )

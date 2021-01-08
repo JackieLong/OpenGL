@@ -1,0 +1,162 @@
+#version 330 core
+
+out     vec4 FragColor;
+
+uniform vec3 viewPos;			// 观察点位置
+uniform int  lightType;			// 光源类型
+
+in      vec3 normal;			// 顶点法向量
+in      vec3 fragPos;			// 顶点世界坐标
+in      vec2 texCoord;
+
+struct Material{				// 物体的材质属性：为每个冯氏光照模型的分量定义一个颜色分量
+	sampler2D diffuse;			// 在漫反射光照下物体的颜色
+	sampler2D specular;			// 镜面光照对物体颜色的影响
+	sampler2D glow;				// 放射光贴图
+	float     shininess;		// 反光度，影响镜面高光的散射/半径
+};
+
+struct SunLight{				// 平行光
+	vec3 dir;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
+struct PointLight{				// 点光源
+	vec3  pos;
+	
+	vec3  ambient;
+	vec3  diffuse;
+	vec3  specular;
+
+	float constant;				// 常数项
+	float linear;				// 一次项
+	float quadratic;			// 二次项
+};
+
+struct SpotLight{				// 聚光（手电筒）
+	vec3  pos;					// 灯源位置
+	vec3  dir;					// 光射向
+	float cutoff;				// 切光角的余弦值
+	float cutoff1;				// 比切光角更大一点的角的余弦值
+
+	vec3  ambient;
+	vec3  diffuse;
+	vec3  specular;
+};
+
+uniform Material   material;
+uniform SunLight   sunLight;
+uniform PointLight pointLight;
+uniform SpotLight spotLight;
+
+void main()
+{
+	if(lightType == 1)		// 平行光（太阳光）
+	{			
+		// ***************计算环境光照分量*******************************************
+		//
+		vec3 ambient  = (sunLight.ambient * vec3(texture(material.diffuse, texCoord)));							
+
+		// ***************计算漫反射光照分量*****************************************
+		//
+		float diff    = max(										// 忽略负值
+							dot(									// 单位向量点乘：计算法向量和光照之间的余弦值
+								normalize( normal ),				// 顶点单位法向量
+								normalize( -sunLight.dir)),			// 光照向量：光源和顶点组成的向量
+								0.0);
+		vec3 diffuse  = sunLight.diffuse * (diff * vec3(texture(material.diffuse, texCoord)));
+	
+		// ***************计算镜面反射光照分量***************************************
+		//
+		float spec    = pow(
+						max(										// 忽略负值
+							dot(									// 单位向量点乘求余弦：反射向量与眼睛到顶点的向量
+								normalize(							// 光照反射向量的基向量
+									reflect(						// 计算反射向量（光的反射）
+											sunLight.dir,			// 入射向量（光照向量）：顶点坐标 - 光源位置
+											normal)),				// 顶点法向量
+								normalize(viewPos - fragPos)),		// 顶点到观察点（眼睛）的基向量
+							0.0),
+						material.shininess);						// 反光度的作用
+		vec3 specular = sunLight.specular * (spec * vec3(texture(material.specular, texCoord)));	// 铁框高亮
+
+		// 计算最终颜色
+		FragColor     = vec4(ambient + diffuse + specular, 1.0);
+	}
+	else if(lightType == 2)		// 点光源
+	{		
+		// ***************计算环境光照分量*******************************************
+		//
+		vec3 ambient  = (pointLight.ambient * vec3(texture(material.diffuse, texCoord)));							
+
+		// ***************计算漫反射光照分量*****************************************
+		//
+		float diff    = max(											// 忽略负值
+							dot(										// 单位向量点乘：计算法向量和光照之间的余弦值
+								normalize( normal ),					// 顶点单位法向量
+								normalize( pointLight.pos - fragPos)),	// 光照向量：光源和顶点组成的向量
+								0.0);
+		vec3 diffuse  = pointLight.diffuse * (diff * vec3(texture(material.diffuse, texCoord)));
+	
+		// ***************计算镜面反射光照分量***************************************
+		//
+		float spec    = pow(
+						max(											// 忽略负值
+							dot(										// 单位向量点乘求余弦：反射向量与眼睛到顶点的向量
+								normalize(								// 光照反射向量的基向量
+									reflect(							// 计算反射向量（光的反射）
+											fragPos - pointLight.pos,	// 入射向量（光照向量）：顶点坐标 - 光源位置
+											normal)),					// 顶点法向量
+								normalize(viewPos - fragPos)),			// 顶点到观察点（眼睛）的基向量
+							0.0),
+						material.shininess);							// 反光度的作用
+		vec3 specular = pointLight.specular * (spec * vec3(texture(material.specular, texCoord)));	// 铁框高亮
+
+		float distance = length(pointLight.pos - fragPos);
+		float attenuation = 1.0 / ( pointLight.constant +
+									pointLight.linear * distance + 
+									pointLight.quadratic * distance * distance
+									);
+		// 计算最终颜色
+		FragColor     = vec4((ambient + diffuse + specular) * attenuation, 1.0);
+	}
+	else if(lightType == 3)		// 聚光（手电筒）
+	{		
+		float theta = dot(normalize(fragPos - spotLight.pos), normalize(spotLight.dir));
+		float epsilon = spotLight.cutoff - spotLight.cutoff1;
+		float intensity = clamp((theta - spotLight.cutoff1)/epsilon, 0.0, 1.0);
+
+		// ***************计算环境光照分量*******************************************
+		//
+		vec3 ambient  = (spotLight.ambient * vec3(texture(material.diffuse, texCoord)));							
+
+		// ***************计算漫反射光照分量*****************************************
+		//
+		float diff    = max(											// 忽略负值
+							dot(										// 单位向量点乘：计算法向量和光照之间的余弦值
+								normalize( normal ),					// 顶点单位法向量
+								normalize( spotLight.pos - fragPos)),	// 光照向量：光源和顶点组成的向量
+								0.0);
+		vec3 diffuse  = intensity * spotLight.diffuse * (diff * vec3(texture(material.diffuse, texCoord)));
+	
+		// ***************计算镜面反射光照分量***************************************
+		//
+		float spec    = pow(
+						max(											// 忽略负值
+							dot(										// 单位向量点乘求余弦：反射向量与眼睛到顶点的向量
+								normalize(								// 光照反射向量的基向量
+									reflect(							// 计算反射向量（光的反射）
+											fragPos - spotLight.pos,	// 入射向量（光照向量）：顶点坐标 - 光源位置
+											normal)),					// 顶点法向量
+								normalize(viewPos - fragPos)),			// 顶点到观察点（眼睛）的基向量
+							0.0),
+						material.shininess);							// 反光度的作用
+		vec3 specular = intensity * spotLight.specular * (spec * vec3(texture(material.specular, texCoord)));	// 铁框高亮
+
+		// 计算最终颜色
+		FragColor     = vec4((ambient + diffuse + specular), 1.0);
+	}
+};

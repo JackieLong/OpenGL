@@ -55,6 +55,7 @@ public:
     glm::mat4 getViewMatrix();
     float fov() const;
     glm::vec3 pos() const;
+    glm::vec3 front()const;
 
     // processes input received from any keyboard-like input system.
     // Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
