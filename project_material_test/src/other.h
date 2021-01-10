@@ -419,4 +419,25 @@ void renderLoop( GLFWwindow *window, function<void()> renderCallback )
     }
 }
 
+void loadMatrixTarget( ShaderProgram &shaderProgram )
+{
+    // 模型变换矩阵，glm0.9.9版本之后，注意一定要显式初始化为单位矩阵，很容易错误默认初始化为零矩阵。
+    glm::mat4 modelMatrix( 1.0f );
+
+    // 视图变换矩阵
+    glm::mat4 viewMatrix = pCamera->getViewMatrix();
+
+    // 投影变换矩阵（透视投影）
+    glm::mat4 projectionMatrix( 1.0f );
+    projectionMatrix = glm::perspective( glm::radians( ( float ) pCamera->fov() ), // 就是FOV，field of view，视角广度
+                                         ( float ) ScreenWidth / ScreenHeight,      // aspectRatio，宽高比
+                                         0.1f,                                     // near plane，近平面位置
+                                         100.0f );                                 // far plane，远平面位置
+
+    shaderProgram.use();
+    shaderProgram.setMat4( "modelMatrix", glm::value_ptr( modelMatrix ) );
+    shaderProgram.setMat4( "viewMatrix", glm::value_ptr( viewMatrix ) );
+    shaderProgram.setMat4( "projectionMatrix", glm::value_ptr( projectionMatrix ) );
+}
+
 #endif
