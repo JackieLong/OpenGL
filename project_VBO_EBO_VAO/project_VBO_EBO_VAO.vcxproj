@@ -117,6 +117,13 @@
   <ItemGroup>
     <ClCompile Include="src\test.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\data.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shader\shader_fragment" />
+    <None Include="src\shader\shader_vertex" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

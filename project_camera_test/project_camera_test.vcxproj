@@ -124,7 +124,7 @@
     <None Include="src\shader\shader_vertex_coord" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\other.h" />
+    <ClInclude Include="src\data.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

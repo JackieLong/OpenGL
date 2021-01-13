@@ -117,7 +117,7 @@
   <ItemGroup>
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Model.h" />
-    <ClInclude Include="src\other.h" />
+    <ClInclude Include="src\data.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Mesh.cpp" />

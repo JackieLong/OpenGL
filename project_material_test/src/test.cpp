@@ -1,30 +1,33 @@
-﻿#include "project_lib.h"
-#include "other.h"
+﻿#include "data.h"
 
 using namespace std;
 
-Camera *pCamera      = nullptr;                         // 摄像机
-glm::vec3 lightPos;                                     // 光源位置
-glm::vec3 lightColor = glm::vec3( 1.0f, 1.0f, 1.0f );   // 光源颜色
-
-void loadMatrixTarget( ShaderProgram &shaderProgram );
-void loadMatrixLight( ShaderProgram &shaderProgram );
+void renderLoop( GLFWwindow *window, function<void()> renderCallback );
+void initGLState();
+void loadMatrixTarget( Shader &shaderProgram );
+void loadMatrixLight( Shader &shaderProgram );
 
 int main()
 {
-    pCamera = new Camera( glm::vec3( 1.0f, 1.0f, 7.0f ),            // 摄像机的初始位置
-                          glm::vec3( 0.5f, 0.5f, 0.0f ),            // 摄像机注视点
-                          glm::vec3( 0.0f, 1.0f, 0.0f ),            // 世界坐标中的向上向量
-                          -90.f,                                    // Yaw
-                          0.0f );                                   // Pitch
-    GLFWwindow *window = init( pCamera );               // 鼠标滚轮回调
+    initGLFW();
 
-    GLuint VAO = 0, VBO = 0;                            // VBO顶点缓冲对象，VAO顶点数组对象，EBO索引缓冲对象
-    GLuint VAO1 = 0, VBO1 = 0;                          // VBO顶点缓冲对象，VAO顶点数组对象，EBO索引缓冲对象
-    GLuint VAO2 = 0, VBO2 = 0;
-    loadVertexDataObject( &VAO, &VBO );                 // 加载物体顶点
-    loadVertexDataCoord( &VAO1, &VBO1 );                // 加载坐标轴顶点
-    loadVertexDataLight( &VAO2, &VBO2 );                // 加载模拟光源物体顶点
+    GLFWwindow *window = createWindow( ScreenWidth,
+                                       ScreenHeight,
+                                       "LearnOpenGL",
+                                       []( GLFWwindow * window, double xoffset, double yoffset )
+    {
+        pCamera->processMouseMovement( window, xoffset, yoffset );
+    },
+    []( GLFWwindow * window, double xoffset, double yoffset )
+    {
+        pCamera->processMouseScroll( window, xoffset, yoffset );
+    } );
+
+    initGLAD();
+
+    initGLState();
+
+    loadData();
 
     renderLoop( window, [&]                                         // 渲染循环
     {
@@ -34,12 +37,12 @@ int main()
         shaderProgramLight.use();
         shaderProgramLight.setVec3( "lightColor", lightColor );
         loadMatrixLight( shaderProgramLight );
-        glBindVertexArray( VAO2 );
+        glBindVertexArray( VAO_light );
         glDrawArrays( GL_TRIANGLES, 0, 36 );
 
         shaderProgramCoord.use();
         loadMatrixTarget( shaderProgramCoord );
-        glBindVertexArray( VAO1 );
+        glBindVertexArray( VAO_coord );
         glDrawArrays( GL_LINES, 0, 6 );
 
         shaderProgram.use();
@@ -65,20 +68,17 @@ int main()
         shaderProgram.setVec3( "light.specular", 1.0f, 1.0f, 1.0f );
 
         loadMatrixTarget( shaderProgram );
-        glBindVertexArray( VAO );
+        glBindVertexArray( VAO_object );
         glDrawArrays( GL_TRIANGLES, 0, 36 );
     } );
 
     // optional: de-allocate all resources once they've outlived their purpose:
-    glDeleteVertexArrays( 1, &VAO );
-    glDeleteVertexArrays( 1, &VAO1 );
-    glDeleteVertexArrays( 1, &VAO2 );
-    glDeleteBuffers( 1, &VBO );
-    glDeleteBuffers( 1, &VBO1 );
-    glDeleteBuffers( 1, &VBO2 );
-    glDeleteBuffers( 1, &EBO );
-    glDeleteBuffers( 1, &EBO1 );
-    glDeleteBuffers( 1, &EBO2 );
+    glDeleteVertexArrays( 1, &VAO_object );
+    glDeleteVertexArrays( 1, &VAO_coord );
+    glDeleteVertexArrays( 1, &VAO_light );
+    glDeleteBuffers( 1, &VBO_object );
+    glDeleteBuffers( 1, &VBO_coord );
+    glDeleteBuffers( 1, &VBO_light );
     glDeleteProgram( shaderProgram.id );
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
@@ -86,8 +86,7 @@ int main()
     return 0;
 }
 
-
-void loadMatrixTarget( ShaderProgram &shaderProgram )
+void loadMatrixTarget( Shader &shaderProgram )
 {
     // 模型变换矩阵，glm0.9.9版本之后，注意一定要显式初始化为单位矩阵，很容易错误默认初始化为零矩阵。
     glm::mat4 modelMatrix( 1.0f );
@@ -108,7 +107,7 @@ void loadMatrixTarget( ShaderProgram &shaderProgram )
     shaderProgram.setMat4( "projectionMatrix", glm::value_ptr( projectionMatrix ) );
 }
 
-void loadMatrixLight( ShaderProgram &shaderProgram )
+void loadMatrixLight( Shader &shaderProgram )
 {
     // 模型变换矩阵，glm0.9.9版本之后，注意一定要显式初始化为单位矩阵，很容易错误默认初始化为零矩阵。
     glm::mat4 modelMatrix( 1.0f );      // 显示坐标轴，不需要进行平移和旋转。
@@ -133,4 +132,47 @@ void loadMatrixLight( ShaderProgram &shaderProgram )
     shaderProgram.setMat4( "modelMatrix", glm::value_ptr( modelMatrix ) );
     shaderProgram.setMat4( "viewMatrix", glm::value_ptr( viewMatrix ) );
     shaderProgram.setMat4( "projectionMatrix", glm::value_ptr( projectionMatrix ) );
+}
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+void processInput( GLFWwindow *window )
+{
+    if( glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
+    {
+        glfwSetWindowShouldClose( window, true );
+    }
+
+    pCamera->processKeyboard( window, ( float ) deltaTime );
+}
+
+void renderLoop( GLFWwindow *window, function<void()> renderCallback )
+{
+    double currentFrame;
+
+    while( !glfwWindowShouldClose( window ) )
+    {
+        currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        processInput( window );                     // 处理输入：键盘、鼠标事件等。
+
+        if( renderCallback != nullptr )             // render loop
+        {
+            renderCallback();
+        }
+
+        glfwSwapBuffers( window );                  // 双缓冲
+
+        // IO轮询，检查有没有触发什么事件（keys pressed/released, mouse moved etc.）,
+        // 并调用对应的回调函数（可以通过回调方法手动设置）,更新窗口状态，
+        glfwPollEvents();
+    }
+}
+
+void initGLState()
+{
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );        // GL_LINE：线框模式；GL_FILL：填充模式
+    glEnable( GL_DEPTH_TEST );                          // 开启深度测试，默认是不开启的。
 }

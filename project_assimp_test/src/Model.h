@@ -16,7 +16,7 @@ class Model
 public:
     Model( const std::string &path );
 
-    void draw( ShaderProgram &shader );
+    void draw( Shader &shader );
 
 private:
     void loadModel( const std::string &path );

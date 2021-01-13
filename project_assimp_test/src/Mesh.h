@@ -29,26 +29,22 @@ struct Texture          // 纹理数据结构体
     std::string path;   // 纹理路径
 };
 
-#include "Mesh.h"
-
-
 class Mesh
 {
 public:
     // mesh Data
-    vector<Vertex>       mVertices;
-    vector<GLuint>       mIndices;
-    vector<Texture>      mTextures;
+    std::vector<Vertex>       mVertices;
+    std::vector<GLuint>       mIndices;
+    std::vector<Texture>      mTextures;
 
     unsigned int mVAO;
     unsigned int mVBO;
     unsigned int mEBO;
 
-
     Mesh::Mesh( std::vector<Vertex>  vertices,
                 std::vector<GLuint>  indices,
                 std::vector<Texture> textures );
-    void Mesh::draw( ShaderProgram &shader );
+    void Mesh::draw( Shader &shader );
     void Mesh::setupMesh();
 };
 

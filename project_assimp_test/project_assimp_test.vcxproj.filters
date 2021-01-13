@@ -18,13 +18,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\other.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\Mesh.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Model.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\data.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

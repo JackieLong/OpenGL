@@ -1,7 +1,12 @@
 ﻿#ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-#include "project_lib.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 // Defines several possible options for camera movement.
 // Used as abstraction to stay away from window - system specific input methods
@@ -38,18 +43,18 @@ public:
     Camera();
 
     // constructor with vectors
-    Camera( glm::vec3 position,
-            glm::vec3 target,
-            glm::vec3 up,
-            float yaw,
-            float pitch );
+    Camera( glm::vec3   position,
+            glm::vec3   target,
+            glm::vec3   up,
+            float       yaw   = YAW,
+            float       pitch = PITCH );
 
     // constructor with scalar values
-    Camera( float posX, float posY, float posZ,
+    Camera( float posX,    float posY,    float posZ,
             float targetX, float targetY, float targetZ,
-            float upX, float upY, float upZ,
-            float yaw,
-            float pitch );
+            float upX,     float upY,     float upZ,
+            float yaw      = YAW,
+            float pitch    = PITCH );
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     glm::mat4 getViewMatrix();
@@ -62,7 +67,7 @@ public:
     void processKeyboard( GLFWwindow *window, float deltaTime );
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-    void processMouseMovement( float xoffset, float yoffset, GLboolean constrainPitch = true );
+    void processMouseMovement( GLFWwindow *window, double xpos, double ypos );
 
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void processMouseScroll( GLFWwindow *window, double xoffset, double yoffset );

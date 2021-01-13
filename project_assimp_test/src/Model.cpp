@@ -7,7 +7,7 @@ Model::Model( const std::string &path )
     loadModel( path );
 }
 
-void Model::draw( ShaderProgram &shader )
+void Model::draw( Shader &shader )
 {
     for( unsigned int i = 0; i < mMeshes.size(); i++ )
     {

@@ -19,21 +19,21 @@ Camera::Camera( glm::vec3 position,
     updateCameraVectors();
 }
 
-Camera::Camera( float posX, float posY, float posZ,
+Camera::Camera( float posX,    float posY,    float posZ,
                 float targetX, float targetY, float targetZ,
-                float upX,  float upY, float  upZ,
-                float yaw, float pitch )
+                float upX,     float upY,     float  upZ,
+                float yaw,     float pitch )
     : mFront( glm::vec3( 0.0f, 0.0f, -1.0f ) ),
       mMovSpeed( SPEED ),
       mMouseSensitivity( SENSITIVITY ),
       mFOV( ZOOM ),
       mViewType( CameraView::FREE )
 {
-    mPos         = glm::vec3( posX, posY, posZ );
-    mTarget      = glm::vec3( targetX, targetY, targetZ );
-    mVecWorldUp  = glm::vec3( upX, upY, upZ );
-    mYaw         = yaw;
-    mPitch       = pitch;
+    mPos        = glm::vec3( posX, posY, posZ );
+    mTarget     = glm::vec3( targetX, targetY, targetZ );
+    mVecWorldUp = glm::vec3( upX, upY, upZ );
+    mYaw        = yaw;
+    mPitch      = pitch;
     updateCameraVectors();
 }
 
@@ -52,7 +52,7 @@ glm::mat4 Camera::getViewMatrix()
         {
             viewMatrix = glm::lookAt( mPos,            // 摄像机位置
                                       mTarget,         // 目标位置（摄像机的注视点）
-                                      mVecWorldUp );           // 世界空间的上向量
+                                      mVecWorldUp );   // 世界空间的上向量
             break;
         }
         case CameraView::ROTATE_Y:     // 摄像机角度2：绕y轴旋转的摄像机视角
@@ -62,7 +62,7 @@ glm::mat4 Camera::getViewMatrix()
             float camZ = ( float ) cos( glfwGetTime() ) * radius;
             viewMatrix = glm::lookAt( glm::vec3( camX, 0.0f, camZ ),    // 摄像机坐标
                                       mTarget,                          // 目标位置（摄像机的注视点）
-                                      mVecWorldUp );  // 世界空间中的上向量
+                                      mVecWorldUp );                    // 世界空间中的上向量
             break;
         }
         case CameraView::FREE:     //摄像机角度3：自由移动的摄像机视角
@@ -81,7 +81,7 @@ glm::mat4 Camera::getViewMatrix()
             glm::vec3 x = glm::normalize( glm::cross( mVecWorldUp, z ) );
             glm::vec3 y = glm::cross( z, x );
 
-            glm::mat4 translateMatrix( 1.0f );      // 平移矩阵，平移到摄像机位置
+            glm::mat4 translateMatrix( 1.0f );                      // 平移矩阵，平移到摄像机位置
             glm::mat4 rotateMatrix( 1.0f );
 
             // 注意，OpenGL采用列主序，所以[3][0]表示第三列第一行，要特别注意。
@@ -108,7 +108,7 @@ glm::mat4 Camera::getViewMatrix()
         case FIX_XZ: //一个真正的FPS摄像机（也就是说不能够随意飞行），你只能够呆在xz平面上。
         {
             viewMatrix = glm::lookAt( mPos,
-                                      mPos + mFront,          // 摄像机一直朝向它的正前方cameraFront，这好像是一句废话，但是camerFront一直在计算。
+                                      mPos + mFront,    // 摄像机一直朝向它的正前方cameraFront，这好像是一句废话，但是camerFront一直在计算。
                                       mVecWorldUp );
             break;
         }
@@ -169,21 +169,24 @@ void Camera::processKeyboard( GLFWwindow *window, float deltaTime )
     }
 }
 
-void Camera::processMouseMovement( float xoffset, float yoffset, GLboolean constrainPitch /*= true */ )
+bool   firstMouse = true;
+double lastX      = 0.0;
+double lastY      = 0.0;
+void Camera::processMouseMovement( GLFWwindow *window, double xpos, double ypos )
 {
-    if( mViewType != CameraView::FREE && mViewType != CameraView::FIX_XZ && mViewType != CameraView::FREE_LOOKAT )
+    if( firstMouse )
     {
-        return;
+        lastX      = xpos;
+        lastY      = ypos;
+        firstMouse = false;
     }
-    xoffset *= mMouseSensitivity;
-    yoffset *= mMouseSensitivity;
 
-    mYaw += xoffset;
-    mPitch += yoffset;
-
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
-    if( constrainPitch )
+    if( mViewType == CameraView::FREE || mViewType == CameraView::FIX_XZ || mViewType == CameraView::FREE_LOOKAT )
     {
+        mYaw   += float( xpos - lastX ) * mMouseSensitivity;
+        mPitch += float( lastY - ypos ) * mMouseSensitivity;
+
+        // make sure that when pitch is out of bounds, screen doesn't get flipped
         if( mPitch > 89.0f )
         {
             mPitch = 89.0f;
@@ -192,10 +195,13 @@ void Camera::processMouseMovement( float xoffset, float yoffset, GLboolean const
         {
             mPitch = -89.0f;
         }
+
+        // update Front, Right and Up Vectors using the updated Euler angles
+        updateCameraVectors();
     }
 
-    // update Front, Right and Up Vectors using the updated Euler angles
-    updateCameraVectors();
+    lastX = xpos;
+    lastY = ypos;
 }
 
 void Camera::processMouseScroll( GLFWwindow *window, double xoffset, double yoffset )
@@ -221,10 +227,10 @@ void Camera::updateCameraVectors()
 
     // normalize the vectors, because their length gets closer to 0 the more you look up or down
     // which results in slower movement.
-    mFront   = glm::normalize( front );
+    mFront = glm::normalize( front );
 
     // also re-calculate the Right and Up vector
-    mRight   = glm::normalize( glm::cross( mFront, mVecWorldUp ) );
-    mUp      = glm::normalize( glm::cross( mRight, mFront ) );
+    mRight = glm::normalize( glm::cross( mFront, mVecWorldUp ) );
+    mUp    = glm::normalize( glm::cross( mRight, mFront ) );
 
 }

@@ -1,76 +1,65 @@
 ﻿#include "project_lib.h"
-#include "other.h"
+#include "data.h"
 
 using namespace std;
 
-Camera *pCamera  = nullptr;
-double deltaTime = 0.0;         // 当前帧与上一帧的时间差
-double lastFrame = 0.0;         // 上一帧的时间
-
 void renderLoop( GLFWwindow *window, function<void()> renderCallback );
-void loadMatrix( ShaderProgram &shaderProgram );
-void loadMatrixCoord( ShaderProgram &shaderProgram );
+void loadMatrix( Shader &shaderProgram );
+void loadMatrixCoord( Shader &shaderProgram );
 void mouse_move_callback( GLFWwindow *window, double xpos, double ypos );
 void mouse_scroll_callback( GLFWwindow *window, double xoffset, double yoffset );
 
 int main()
 {
-    GLFWwindow *window = init( mouse_move_callback,                 // 鼠标移动回调
-                               mouse_scroll_callback );             // 鼠标滚轮回调
+    initGLFW();
 
-    pCamera = new Camera( glm::vec3( 0.0f, 0.0f, 3.0f ),            // 摄像机的初始位置
-                          glm::vec3( 0.0f, 0.0f, 0.0f ),            // 摄像机注视点
-                          glm::vec3( 0.0f, 1.0f, 0.0f ),            // 世界坐标中的向上向量
-                          -90.f,                                    // Yaw
-                          0.0f );                                   // Pitch
-
-    glm::vec3 cubePositions[] =                                     // 每个笑脸立方体从世界坐标原点平移的位移
+    GLFWwindow *window = createWindow( ScreenWidth,
+                                       ScreenHeight,
+                                       "LearnOpenGL",
+                                       []( GLFWwindow * window, double xoffset, double yoffset )
     {
-        glm::vec3( 0.0f,  0.0f,  0.0f ),
-        glm::vec3( 2.0f,  5.0f, -15.0f ),
-        glm::vec3( -1.5f, -2.2f, -2.5f ),
-        glm::vec3( -3.8f, -2.0f, -12.3f ),
-        glm::vec3( 2.4f, -0.4f, -3.5f ),
-        glm::vec3( -1.7f,  3.0f, -7.5f ),
-        glm::vec3( 1.3f, -2.0f, -2.5f ),
-        glm::vec3( 1.5f,  2.0f, -2.5f ),
-        glm::vec3( 1.5f,  0.2f, -1.5f ),
-        glm::vec3( -1.3f,  1.0f, -1.5f )
-    };
+        pCamera->processMouseMovement( window, xoffset, yoffset );
+    },
+    []( GLFWwindow * window, double xoffset, double yoffset )
+    {
+        pCamera->processMouseScroll( window, xoffset, yoffset );
+    } );
+
+    initGLAD();
+
+    initGLState();
+
+    loadData();
 
     renderLoop( window, [&]                                         // 渲染循环
     {
         glClearColor( 0.2f, 0.3f, 0.3f, 1.0f );                     // 状态设置函数：设置清空屏幕后，颜色缓冲区填充的颜色
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );       // 状态使用函数：清空颜色缓冲区和深度缓冲区
 
-        loadMatrix( shaderProgram );                                // 传递变换矩阵给顶点着色器使用。包含模型、视图、投影矩阵
-        glBindVertexArray( VAO );
+        loadMatrix( shader );                                // 传递变换矩阵给顶点着色器使用。包含模型、视图、投影矩阵
+        glBindVertexArray( VAO_object );
         for( unsigned int i = 0; i < 10; i++ )                      // 绘制10个这样个立方体
         {
             glm::mat4 model( 1.0f );                                // 主要要显式初始化为单位矩阵
             model = glm::translate( model, cubePositions[i] );      // 每个立方体平移不同位移（模型变换矩阵完成）
-            shaderProgram.use();
-            shaderProgram.setMat4( "modelMatrix", glm::value_ptr( model ) );    // 绘制每个立方体，都使用各自的模型变换矩阵。
+            shader.use();
+            shader.setMat4( "modelMatrix", glm::value_ptr( model ) );    // 绘制每个立方体，都使用各自的模型变换矩阵。
 
             glDrawArrays( GL_TRIANGLES, 0, 36 );                                // 绘制立方体，触发管线流程
         }
 
-        loadMatrixCoord( shaderProgramCoord );
-        glBindVertexArray( VAO1 );
+        loadMatrixCoord( shader_coord );
+        glBindVertexArray( VAO_coord );
         glDrawArrays( GL_LINES, 0, 6 );
 
     } );
 
     // optional: de-allocate all resources once they've outlived their purpose:
-    glDeleteVertexArrays( 1, &VAO );
-    glDeleteVertexArrays( 1, &VAO1 );
-
-    glDeleteBuffers( 1, &VBO );
-    glDeleteBuffers( 1, &VBO1 );
-
-    glDeleteBuffers( 1, &EBO );
-    glDeleteBuffers( 1, &EBO1 );
-    glDeleteProgram( shaderProgram.id );
+    glDeleteVertexArrays( 1, &VAO_object );
+    glDeleteVertexArrays( 1, &VAO_coord );
+    glDeleteBuffers( 1, &VBO_object );
+    glDeleteBuffers( 1, &VBO_coord );
+    glDeleteProgram( shader.id );
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
@@ -86,29 +75,6 @@ void processInput( GLFWwindow *window )
         glfwSetWindowShouldClose( window, true );
     }
     pCamera->processKeyboard( window, ( float ) deltaTime );
-}
-
-bool   firstMouse = true;
-double lastX      = 0.0;
-double lastY      = 0.0;
-void mouse_move_callback( GLFWwindow *window, double xpos, double ypos )
-{
-    if( firstMouse )
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    pCamera->processMouseMovement( float( xpos - lastX ), float( lastY - ypos ) );
-
-    lastX = xpos;
-    lastY = ypos;
-}
-
-void mouse_scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
-{
-    pCamera->processMouseScroll( window, xoffset, yoffset );
 }
 
 void renderLoop( GLFWwindow *window, function<void()> renderCallback )
@@ -135,7 +101,7 @@ void renderLoop( GLFWwindow *window, function<void()> renderCallback )
     }
 }
 
-void loadMatrix( ShaderProgram &shaderProgram )
+void loadMatrix( Shader &shaderProgram )
 {
     // 模型变换矩阵，glm0.9.9版本之后，注意一定要显式初始化为单位矩阵，很容易错误默认初始化为零矩阵。
     glm::mat4 modelMatrix( 1.0f );
@@ -162,7 +128,7 @@ void loadMatrix( ShaderProgram &shaderProgram )
     shaderProgram.setMat4( "projectionMatrix", glm::value_ptr( projectionMatrix ) );
 }
 
-void loadMatrixCoord( ShaderProgram &shaderProgram )
+void loadMatrixCoord( Shader &shaderProgram )
 {
     // 模型变换矩阵，glm0.9.9版本之后，注意一定要显式初始化为单位矩阵，很容易错误默认初始化为零矩阵。
     glm::mat4 modelMatrix( 1.0f );      // 显示坐标轴，不需要进行平移和旋转。

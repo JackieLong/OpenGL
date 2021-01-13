@@ -1,5 +1,7 @@
 ﻿#include "Mesh.h"
 
+using namespace std;
+
 Mesh::Mesh( std::vector<Vertex>  vertices,
             std::vector<GLuint>  indices,
             std::vector<Texture> textures )
@@ -13,7 +15,7 @@ Mesh::Mesh( std::vector<Vertex>  vertices,
     setupMesh();
 }
 
-void Mesh::draw( ShaderProgram &shader )
+void Mesh::draw( Shader &shader )
 {
     shader.use();
 
