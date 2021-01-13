@@ -47,9 +47,9 @@ int main()
 
         shaderProgram.use();
 
-        lightColor.x = sin( glfwGetTime() * 2.0f );
-        lightColor.y = sin( glfwGetTime() * 0.7f );
-        lightColor.z = sin( glfwGetTime() * 1.3f );
+        lightColor.x = ( float ) sin( glfwGetTime() * 2.0f );
+        lightColor.y = ( float ) sin( glfwGetTime() * 0.7f );
+        lightColor.z = ( float ) sin( glfwGetTime() * 1.3f );
 
         shaderProgram.setVec3( "lightColor", lightColor );              // 光照颜色
         shaderProgram.setVec3( "viewPos", pCamera->pos() );             // 观察位置
