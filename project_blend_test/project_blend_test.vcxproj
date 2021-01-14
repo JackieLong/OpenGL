@@ -18,19 +18,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\data.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\test.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\shader\shader_fragment" />
-    <None Include="src\shader\shader_vertex" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6CDA03EA-7CAE-4567-A471-62965571CF30}</ProjectGuid>
-    <RootNamespace>project_depth_test</RootNamespace>
+    <ProjectGuid>{329AFD78-42B8-4607-BD4A-5D863F1B226C}</ProjectGuid>
+    <RootNamespace>project_blend_test</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -124,6 +114,16 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="src\data.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shader\shader_fragment" />
+    <None Include="src\shader\shader_vertex" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

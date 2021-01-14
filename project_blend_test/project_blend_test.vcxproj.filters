@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="源文件\shader">
-      <UniqueIdentifier>{cc14c390-4ecf-4e25-8975-59b833947629}</UniqueIdentifier>
+      <UniqueIdentifier>{a8750f47-06c4-4fbe-ba7a-9b19665a659c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
