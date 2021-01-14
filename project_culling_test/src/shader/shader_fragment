@@ -1,0 +1,30 @@
+#version 330 core
+
+in vec2 TexCoord;
+in vec3 outColor;
+
+uniform sampler2D texture0;
+uniform int		  task;			// 1：绘制坐标系，2：绘制箱子，3：绘制地板
+
+out vec4 FragColor;
+
+//enum SHADER_TASK
+//{
+//    TASK_DRAW_COORD = 0,
+//    TASK_DRAW_CUBE,
+//    TASK_DRAW_FLOOR,
+//    TASK_DRAW_WINDOW,
+//    TASK_MAX
+//};
+
+void main()
+{
+	if(task == 0)
+	{
+		FragColor = vec4(outColor, 1.0);
+	}
+	else
+	{
+		FragColor = texture(texture0, TexCoord);
+	}
+};
