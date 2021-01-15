@@ -161,12 +161,12 @@ void loadData()
                           glm::vec3( 0.5f, 0.5f, 0.0f ),            // 摄像机注视点
                           glm::vec3( 0.0f, 1.0f, 0.0f ) );          // 世界坐标中的向上向量
 
-    loadVertexData( vertices_object, sizeof( vertices_object ), "332", &VAO_object, &VBO_object );
-    loadVertexData( vertices_coord, sizeof( vertices_object ), "33", &VAO_coord, &VBO_coord );
-    loadVertexData( vertices_light, sizeof( vertices_object ), "32", &VAO_light, &VBO_light );
+    createVertexBuffer( vertices_object, sizeof( vertices_object ), "332", &VAO_object, &VBO_object );
+    createVertexBuffer( vertices_coord, sizeof( vertices_object ), "33", &VAO_coord, &VBO_coord );
+    createVertexBuffer( vertices_light, sizeof( vertices_object ), "32", &VAO_light, &VBO_light );
 
-    sampler_diffuse = loadTexture( projectDir() + "\\res\\container2_diffuse.png" );     // 加载镜面反射贴图
-    sampler_specular = loadTexture( projectDir() + "\\res\\container2_specular.png" );    // 加载漫反射贴图
+    sampler_diffuse = createTexture( projectDir() + "\\res\\container2_diffuse.png" );     // 加载镜面反射贴图
+    sampler_specular = createTexture( projectDir() + "\\res\\container2_specular.png" );    // 加载漫反射贴图
 
     // 笑脸立方体着色器
     shader = Shader( projectDir() + "\\src\\shader\\shader_vertex",

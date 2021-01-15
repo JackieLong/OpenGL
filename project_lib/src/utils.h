@@ -11,18 +11,18 @@
 std::string projectDir();
 
 // 加载纹理到GPU
-GLuint loadTexture( const std::string &path,                            // 纹理路径
-                    std::function<void()> paramCallback = nullptr );    // 自定义设置纹理参数
+GLuint createTexture( const std::string &path,                            // 纹理路径
+                      std::function<void()> paramCallback = nullptr );    // 自定义设置纹理参数
 
 // 加载顶点数据到GPU缓冲中
-void loadVertexData( const GLfloat *vertices,               // 顶点数组
-                     const int &len,                        // 顶点数组长度（字节数
-                     const std::string &components,         // 顶点数据分量组成，如“332”，表示3个分量，2个3float，一个2float
-                     GLuint *VAO,                           // VAO
-                     GLuint *VBO,                           // VBO
-                     const GLuint *indices = nullptr,       // 顶点索引数组
-                     const int &lenIndices = 0,             // 顶点索引数组长度（字节数）
-                     GLuint *EBO = nullptr );               // Element Buffer Object
+void createVertexBuffer( const GLfloat *vertices,               // 顶点数组
+                         const int &len,                        // 顶点数组长度（字节数
+                         const std::string &components,         // 顶点数据分量组成，如“332”，表示3个分量，2个3float，一个2float
+                         GLuint *VAO,                           // VAO
+                         GLuint *VBO,                           // VBO
+                         const GLuint *indices = nullptr,       // 顶点索引数组
+                         const int &lenIndices = 0,             // 顶点索引数组长度（字节数）
+                         GLuint *EBO = nullptr );               // Element Buffer Object
 
 // 初始化GLFW库
 void initGLFW();

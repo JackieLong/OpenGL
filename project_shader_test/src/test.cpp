@@ -4,7 +4,7 @@
 #include "project_lib.h"
 
 void renderLoop( GLFWwindow *window, std::function<void()> renderCallback );
-void loadVertexData( GLuint &VAO, GLuint &VBO, GLuint &EBO );
+void createVertexBuffer( GLuint &VAO, GLuint &VBO, GLuint &EBO );
 
 int main()
 {
@@ -18,7 +18,7 @@ int main()
                             projectDir() + "/src/shader/shader_fragment" );
 
     GLuint VAO = 0, VBO = 0, EBO = 0;
-    loadVertexData( VAO, VBO, EBO );
+    createVertexBuffer( VAO, VBO, EBO );
 
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );    // GL_LINE：线框模式；GL_FILL：填充模式
 
@@ -76,7 +76,7 @@ void renderLoop( GLFWwindow *window, std::function<void()> renderCallback )
     }
 }
 
-void loadVertexData( GLuint &VAO, GLuint &VBO, GLuint &EBO )
+void createVertexBuffer( GLuint &VAO, GLuint &VBO, GLuint &EBO )
 {
     // 3个顶点绘制一个三角形
     float vertices[] =
@@ -92,5 +92,5 @@ void loadVertexData( GLuint &VAO, GLuint &VBO, GLuint &EBO )
         0, 1, 2,                // 第一个三角形
     };
 
-    loadVertexData( vertices, sizeof( vertices ), "34", &VAO, &VBO, indices, sizeof( indices ), &EBO );
+    createVertexBuffer( vertices, sizeof( vertices ), "34", &VAO, &VBO, indices, sizeof( indices ), &EBO );
 }

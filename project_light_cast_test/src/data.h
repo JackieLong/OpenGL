@@ -171,12 +171,12 @@ void loadData()
     shader_light = Shader( projectDir() + "\\src\\shader\\shader_vertex_light",
                            projectDir() + "\\src\\shader\\shader_fragment_light" );
 
-    loadVertexData( vertices_object, sizeof( vertices_object ), "332", &VAO_object, &VBO_object );
-    loadVertexData( vertices_light, sizeof( vertices_light ), "32", &VAO_light, &VBO_light );
-    loadVertexData( vertices_coord, sizeof( vertices_coord ), "3", &VAO_coord, &VBO_coord );
+    createVertexBuffer( vertices_object, sizeof( vertices_object ), "332", &VAO_object, &VBO_object );
+    createVertexBuffer( vertices_light, sizeof( vertices_light ), "32", &VAO_light, &VBO_light );
+    createVertexBuffer( vertices_coord, sizeof( vertices_coord ), "3", &VAO_coord, &VBO_coord );
 
-    texture_diffuse = loadTexture( projectDir() + "\\res\\container2_diffuse.png" );     // 加载镜面反射贴图
-    texture_specular = loadTexture( projectDir() + "\\res\\container2_specular.png" );    // 加载漫反射贴图
+    texture_diffuse = createTexture( projectDir() + "\\res\\container2_diffuse.png" );     // 加载镜面反射贴图
+    texture_specular = createTexture( projectDir() + "\\res\\container2_specular.png" );    // 加载漫反射贴图
 
     glActiveTexture( GL_TEXTURE0 );
     glBindTexture( GL_TEXTURE_2D, texture_diffuse );

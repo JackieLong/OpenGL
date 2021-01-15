@@ -33,9 +33,9 @@ void loadData()
     shader = Shader( projectDir() + "\\src\\shader\\shader_vertex",     // 顶点着色器脚本
                      projectDir() + "\\src\\shader\\shader_fragment" ); // 片段着色器脚本
 
-    texture = loadTexture( projectDir() + "\\res\\awesomeface.png" );
+    texture = createTexture( projectDir() + "\\res\\awesomeface.png" );
 
-    loadVertexData( vertices, sizeof( vertices ), "342", &VAO, &VBO, indices, sizeof( indices ), &EBO );
+    createVertexBuffer( vertices, sizeof( vertices ), "342", &VAO, &VBO, indices, sizeof( indices ), &EBO );
 }
 
 #endif

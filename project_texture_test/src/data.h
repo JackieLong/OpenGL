@@ -117,13 +117,13 @@ void loadData()
     shader = Shader( projectDir() + "\\src\\shader\\shader_vertex",     // 顶点着色器脚本
                      projectDir() + "\\src\\shader\\shader_fragment" ); // 片段着色器脚本
 
-    loadVertexData( vertices, sizeof( vertices ), "332", &VAO, &VBO, indices, sizeof( indices ), &EBO );
+    createVertexBuffer( vertices, sizeof( vertices ), "332", &VAO, &VBO, indices, sizeof( indices ), &EBO );
 
-    loadVertexData( vertices_coord, sizeof( vertices_coord ), "33", &VAO_coord, &VBO_coord, indices_coord, sizeof( indices_coord ), &EBO_coord );
+    createVertexBuffer( vertices_coord, sizeof( vertices_coord ), "33", &VAO_coord, &VBO_coord, indices_coord, sizeof( indices_coord ), &EBO_coord );
 
     shader.use();
 
-    texture_wall = loadTexture( projectDir() + "\\res\\wall.jpg", []
+    texture_wall = createTexture( projectDir() + "\\res\\wall.jpg", []
     {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );         // “X”轴方向上的Wrapping方式
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );         // “Y”轴方向上的Wrapping方式
@@ -131,7 +131,7 @@ void loadData()
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );     // 纹理放大时，采用GL_LINEAR策略
     } );
 
-    texture_wall_nearest = loadTexture( projectDir() + "\\res\\wall.jpg", []
+    texture_wall_nearest = createTexture( projectDir() + "\\res\\wall.jpg", []
     {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );         // “X”轴方向上的Wrapping方式
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );         // “Y”轴方向上的Wrapping方式
@@ -139,7 +139,7 @@ void loadData()
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );     // 纹理放大时，采用GL_LINEAR策略
     } );
 
-    texture_wall_repeat = loadTexture( projectDir() + "\\res\\awesomeface.png", []
+    texture_wall_repeat = createTexture( projectDir() + "\\res\\awesomeface.png", []
     {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );         // “X”轴方向上的Wrapping方式
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );         // “Y”轴方向上的Wrapping方式
@@ -147,7 +147,7 @@ void loadData()
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );     // 纹理放大时，采用GL_LINEAR策略
     } );
 
-    texture_wall_mirrored_repeat = loadTexture( projectDir() + "\\res\\awesomeface.png", []
+    texture_wall_mirrored_repeat = createTexture( projectDir() + "\\res\\awesomeface.png", []
     {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT );         // “X”轴方向上的Wrapping方式
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT );         // “Y”轴方向上的Wrapping方式
@@ -155,7 +155,7 @@ void loadData()
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );     // 纹理放大时，采用GL_LINEAR策略
     } );
 
-    texture_wall_clamp_to_edge = loadTexture( projectDir() + "\\res\\wall.jpg", []
+    texture_wall_clamp_to_edge = createTexture( projectDir() + "\\res\\wall.jpg", []
     {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );         // “X”轴方向上的Wrapping方式
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );         // “Y”轴方向上的Wrapping方式
@@ -163,7 +163,7 @@ void loadData()
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );     // 纹理放大时，采用GL_LINEAR策略
     } );
 
-    texture_wall_clamp_to_border = loadTexture( projectDir() + "\\res\\awesomeface.png", []
+    texture_wall_clamp_to_border = createTexture( projectDir() + "\\res\\awesomeface.png", []
     {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );         // “X”轴方向上的Wrapping方式
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );         // “Y”轴方向上的Wrapping方式
@@ -171,7 +171,7 @@ void loadData()
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );     // 纹理放大时，采用GL_LINEAR策略
     } );
 
-    texture_face = loadTexture( projectDir() + "\\res\\awesomeface.png", []
+    texture_face = createTexture( projectDir() + "\\res\\awesomeface.png", []
     {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );         // “X”轴方向上的Wrapping方式
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );         // “Y”轴方向上的Wrapping方式

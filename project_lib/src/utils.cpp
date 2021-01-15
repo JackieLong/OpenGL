@@ -24,12 +24,13 @@ string projectDir()
     return ret;
 }
 
-GLuint loadTexture( const std::string &path,
-                    std::function<void()> paramCallback /*=nullptr*/ )
+GLuint createTexture( const std::string &path,
+                      std::function<void()> paramCallback /*=nullptr*/ )
 {
     GLuint textureID;
     glGenTextures( 1, &textureID );
-    glBindTexture( GL_TEXTURE_2D, textureID );
+
+    glBindTexture( GL_TEXTURE_2D, textureID );      // 暂时的绑定，目的是让后续的开辟纹理内存生效（glTexImage2D），最后应该恢复成默认绑定
 
     if( paramCallback != nullptr )
     {
@@ -72,19 +73,21 @@ GLuint loadTexture( const std::string &path,
     {
         cout << "Failed to load texture" << endl;
     }
+
     stbi_image_free( data );                // 纹理数据已经上传到显存中，内存中的数据可以删除了。
+    glBindTexture( GL_TEXTURE_2D, 0 );      // 恢复成默认
 
     return textureID;
 }
 
-void loadVertexData( const GLfloat *vertices,
-                     const int &len,
-                     const std::string &components,
-                     GLuint *VAO,
-                     GLuint *VBO,
-                     const GLuint *indices /*= nullptr*/,
-                     const int &lenIndices /*= 0*/,
-                     GLuint *EBO /*= nullptr */ )
+void createVertexBuffer( const GLfloat *vertices,
+                         const int &len,
+                         const std::string &components,
+                         GLuint *VAO,
+                         GLuint *VBO,
+                         const GLuint *indices /*= nullptr*/,
+                         const int &lenIndices /*= 0*/,
+                         GLuint *EBO /*= nullptr */ )
 {
     glGenVertexArrays( 1, VAO );
     glBindVertexArray( *VAO );

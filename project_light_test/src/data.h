@@ -151,12 +151,12 @@ void loadData()
     shader_light = Shader( projectDir() + "\\src\\shader\\shader_vertex_light",
                            projectDir() + "\\src\\shader\\shader_fragment_light" );
 
-    loadVertexData( vertices_object, sizeof( vertices_object ), "33", &VAO_object, &VBO_object );
-    loadVertexData( vertices_light, sizeof( vertices_light ), "32", &VAO_light, &VBO_light );
-    loadVertexData( vertices_coord, sizeof( vertices_coord ), "3", &VAO_coord, &VBO_coord );
+    createVertexBuffer( vertices_object, sizeof( vertices_object ), "33", &VAO_object, &VBO_object );
+    createVertexBuffer( vertices_light, sizeof( vertices_light ), "32", &VAO_light, &VBO_light );
+    createVertexBuffer( vertices_coord, sizeof( vertices_coord ), "3", &VAO_coord, &VBO_coord );
 
 
-    texture = loadTexture( projectDir() + "\\res\\awesomeface.png" );     // 加载镜面反射贴图
+    texture = createTexture( projectDir() + "\\res\\awesomeface.png" );     // 加载镜面反射贴图
 
     glActiveTexture( GL_TEXTURE0 );
     glBindTexture( GL_TEXTURE_2D, texture );

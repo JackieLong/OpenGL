@@ -3,7 +3,7 @@
 using namespace std;
 
 void renderLoop( GLFWwindow *window, function<void()> renderCallback );
-void loadVertexData( GLuint *VAO, GLuint *VBO );
+void createVertexBuffer( GLuint *VAO, GLuint *VBO );
 void loadTextureData( const Shader & );
 void loadMatrix( Shader &shaderProgram );
 
@@ -27,9 +27,9 @@ int main()
                                    projectDir() + "\\src\\shader\\shader_fragment" ); // 片段着色器脚本
 
     GLuint VAO = 0, VBO = 0;
-    loadVertexData( &VAO, &VBO );            // 加载顶点数据到缓冲区
+    createVertexBuffer( &VAO, &VBO );            // 加载顶点数据到缓冲区
 
-    GLuint texture = loadTexture( projectDir() + "\\res\\awesomeface.png" );     // 加载镜面反射贴图
+    GLuint texture = createTexture( projectDir() + "\\res\\awesomeface.png" );     // 加载镜面反射贴图
     glActiveTexture( GL_TEXTURE0 );
     glBindTexture( GL_TEXTURE_2D, texture );
 
@@ -112,7 +112,7 @@ void renderLoop( GLFWwindow *window, function<void()> renderCallback )
     }
 }
 
-void loadVertexData( GLuint *VAO, GLuint *VBO )
+void createVertexBuffer( GLuint *VAO, GLuint *VBO )
 {
     // 6个顶点（6个面 x 每个面有2个三角形组成 x 每个三角形有3个顶点）
     // 这里没有使用索引缓冲对象
@@ -162,7 +162,7 @@ void loadVertexData( GLuint *VAO, GLuint *VBO )
         -0.5f, 0.5f, -0.5f,  0.0f, 1.0f
     };
 
-    loadVertexData( vertices, sizeof( vertices ), "32", VAO, VBO );
+    createVertexBuffer( vertices, sizeof( vertices ), "32", VAO, VBO );
 }
 
 void loadMatrix( Shader &shaderProgram )

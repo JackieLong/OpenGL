@@ -148,14 +148,14 @@ void loadData()
 
     shader        = Shader( projectDir() + "\\src\\shader\\shader_vertex", projectDir() + "\\src\\shader\\shader_fragment" );
 
-    loadVertexData( cubeVertices, sizeof( cubeVertices ), "32", &VAO_cube, &VBO_cube );
-    loadVertexData( floorVertices, sizeof( floorVertices ), "32", &VAO_floor, &VBO_floor );
-    loadVertexData( coordVertices, sizeof( coordVertices ), "323", &VAO_coord, &VBO_coord );
-    loadVertexData( grassVertices, sizeof( grassVertices ), "32", &VAO_window, &VBO_window, grassIndices, sizeof( grassIndices ), &EBO_window );
+    createVertexBuffer( cubeVertices, sizeof( cubeVertices ), "32", &VAO_cube, &VBO_cube );
+    createVertexBuffer( floorVertices, sizeof( floorVertices ), "32", &VAO_floor, &VBO_floor );
+    createVertexBuffer( coordVertices, sizeof( coordVertices ), "323", &VAO_coord, &VBO_coord );
+    createVertexBuffer( grassVertices, sizeof( grassVertices ), "32", &VAO_window, &VBO_window, grassIndices, sizeof( grassIndices ), &EBO_window );
 
-    textureFloor  = loadTexture( projectDir() + "/res/metal.png" );
-    textureCube   = loadTexture( projectDir() + "/res/marble.jpg" );
-    textureWindow = loadTexture( projectDir() + "/res/blending_transparent_window.png" );
+    textureFloor  = createTexture( projectDir() + "/res/metal.png" );
+    textureCube   = createTexture( projectDir() + "/res/marble.jpg" );
+    textureWindow = createTexture( projectDir() + "/res/blending_transparent_window.png" );
 
 }
 #endif

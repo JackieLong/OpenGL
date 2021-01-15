@@ -100,7 +100,7 @@ void loadData()
                            projectDir() + "\\src\\shader\\shader_fragment_light" );
 
     //loadVertexData( vertices_object, sizeof( vertices_object ), "32", &VAO_object, &VBO_object );
-    loadVertexData( vertices_coord, sizeof( vertices_coord ), "3", &VAO_coord, &VBO_coord );
+    createVertexBuffer( vertices_coord, sizeof( vertices_coord ), "3", &VAO_coord, &VBO_coord );
 }
 
 void initGLState()

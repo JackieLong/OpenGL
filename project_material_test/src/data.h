@@ -135,9 +135,9 @@ void loadData()
                           glm::vec3( 0.5f, 0.5f, 0.0f ),            // 摄像机注视点
                           glm::vec3( 0.0f, 1.0f, 0.0f ) );          // 世界坐标中的向上向量
 
-    loadVertexData( vertices_object, sizeof( vertices_object ), "33", &VAO_object, &VBO_object );
-    loadVertexData( vertices_light, sizeof( vertices_light ), "32", &VAO_light, &VBO_light );
-    loadVertexData( vertices_coord, sizeof( vertices_coord ), "33", &VAO_coord, &VBO_coord );
+    createVertexBuffer( vertices_object, sizeof( vertices_object ), "33", &VAO_object, &VBO_object );
+    createVertexBuffer( vertices_light, sizeof( vertices_light ), "32", &VAO_light, &VBO_light );
+    createVertexBuffer( vertices_coord, sizeof( vertices_coord ), "33", &VAO_coord, &VBO_coord );
 
     // 笑脸立方体着色器
     shaderProgram = Shader( projectDir() + "\\src\\shader\\shader_vertex",
@@ -150,7 +150,7 @@ void loadData()
     shaderProgramLight = Shader( projectDir() + "\\src\\shader\\shader_vertex_light",
                                  projectDir() + "\\src\\shader\\shader_fragment_light" );
 
-    texture = loadTexture( projectDir() + "\\res\\awesomeface.png" );
+    texture = createTexture( projectDir() + "\\res\\awesomeface.png" );
     glActiveTexture( GL_TEXTURE0 );
     glBindTexture( GL_TEXTURE_2D, texture );
     shaderProgram.use();

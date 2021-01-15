@@ -20,10 +20,10 @@ int main()
     switch( mode )
     {
         case MODE_VBO:
-            loadVertexData( vertices_VBO, sizeof( vertices_VBO ), "3", &VAO, &VBO );
+            createVertexBuffer( vertices_VBO, sizeof( vertices_VBO ), "3", &VAO, &VBO );
             break;
         case MODE_EBO:
-            loadVertexData( vertices_VBO, sizeof( vertices_VBO ), "3", &VAO, &VBO, indices_EBO, sizeof( indices_EBO ), &EBO );
+            createVertexBuffer( vertices_VBO, sizeof( vertices_VBO ), "3", &VAO, &VBO, indices_EBO, sizeof( indices_EBO ), &EBO );
             break;
         default:
             break;

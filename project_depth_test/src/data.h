@@ -113,12 +113,12 @@ void loadData()
 
     shader = Shader( projectDir() + "\\src\\shader\\shader_vertex", projectDir() + "\\src\\shader\\shader_fragment" );
 
-    loadVertexData( cubeVertices, sizeof( cubeVertices ), "32", &VAO_cube, &VBO_cube );
-    loadVertexData( floorVertices, sizeof( floorVertices ), "32", &VAO_floor, &VBO_floor );
-    loadVertexData( coordVertices, sizeof( coordVertices ), "3", &VAO_coord, &VBO_coord );
+    createVertexBuffer( cubeVertices, sizeof( cubeVertices ), "32", &VAO_cube, &VBO_cube );
+    createVertexBuffer( floorVertices, sizeof( floorVertices ), "32", &VAO_floor, &VBO_floor );
+    createVertexBuffer( coordVertices, sizeof( coordVertices ), "3", &VAO_coord, &VBO_coord );
 
-    textureFloor = loadTexture( projectDir() + "/res/metal.png" );
-    textureCube = loadTexture( projectDir() + "/res/marble.jpg" );
+    textureFloor = createTexture( projectDir() + "/res/metal.png" );
+    textureCube = createTexture( projectDir() + "/res/marble.jpg" );
 
 
 }
