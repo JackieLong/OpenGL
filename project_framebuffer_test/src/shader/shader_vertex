@@ -1,0 +1,40 @@
+
+#version 330 core
+
+layout (location = 0) in vec3 aPos;			
+layout (location = 1) in vec2 aTexCoord;	
+layout (location = 2) in vec3 aColor;		
+
+uniform int  task;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
+out vec2 outTexCoord;							// 输出到顶点着色器
+out vec3 outColor;
+
+//enum SHADER_TASK
+//{
+//    TASK_COORD = 0,
+//    TASK_OBJECT,
+//    TASK_SCREEN,
+//    TASK_END
+//}
+
+void main()	
+{
+	if(task == 0){
+		gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
+		outColor = aColor;
+	}
+	else if(task == 1)
+	{
+		gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
+		outTexCoord = aTexCoord;
+	}
+	else if(task == 2)
+	{
+		gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);
+		outTexCoord = aTexCoord;
+	}
+};
