@@ -192,8 +192,8 @@ GLuint createFrameBuffer()
     // 屏幕另一边的像素，而另一边的像素本不应该对中心像素产生影响，这就可能会在屏幕边缘产
     // 生很奇怪的条纹。为了消除这一问题，我们可以将屏幕纹理的环绕方式都设置为GL_CLAMP_TO_EDGE。
     // 这样子在取到纹理外的像素时，就能够重复边缘的像素来更精确地估计最终的值了。
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
     glBindTexture( GL_TEXTURE_2D, 0 );          // 别忘了恢复成默认的，到这一步，纹理附件已经创建完成
 
