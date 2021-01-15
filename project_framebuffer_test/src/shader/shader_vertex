@@ -18,8 +18,14 @@ out vec3 outColor;
 //    TASK_COORD = 0,
 //    TASK_OBJECT,
 //    TASK_SCREEN,
+//    TASK_EFFECT_REVERSE,				// 反相
+//    TASK_EFFECT_GRAY_SCALE,			// 灰度
+//	  TASK_EFFECT_GRAY_SCALE_WEIGHT,	// 加权灰度
+//	  TASK_EFFECT_KERNEL,				// 核效果
+//	  TASK_EFFECT_BLUR,				    // 模糊
+//	  TASK_EFFECT_EDGE_DETECTION,       // 边缘检测
 //    TASK_END
-//}
+//};
 
 void main()	
 {
@@ -32,7 +38,7 @@ void main()
 		gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
 		outTexCoord = aTexCoord;
 	}
-	else if(task == 2)
+	else
 	{
 		gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);
 		outTexCoord = aTexCoord;

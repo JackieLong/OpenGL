@@ -110,7 +110,13 @@ void drawToDefaultFrameBuffer()
     glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
     glClear( GL_COLOR_BUFFER_BIT );
 
-    shader.setInt( "task", TASK_SCREEN );
+    //shader.setInt( "task", TASK_SCREEN );
+    //shader.setInt( "task", TASK_EFFECT_REVERSE );
+    //shader.setInt( "task", TASK_EFFECT_GRAY_SCALE );
+    //shader.setInt( "task", TASK_EFFECT_GRAY_SCALE_WEIGHT );
+    //shader.setInt( "task", TASK_EFFECT_KERNEL );
+    //shader.setInt( "task", TASK_EFFECT_BLUR );
+    shader.setInt( "task", TASK_EFFECT_EDGE_DETECTION );
     glBindTexture( GL_TEXTURE_2D, textureColorBuffer );     // 使用颜色附件数据来纹理贴图。
 
     glBindVertexArray( VAO_screen );

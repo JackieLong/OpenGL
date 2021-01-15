@@ -98,6 +98,12 @@ enum SHADER_TASK
     TASK_COORD = 0,
     TASK_OBJECT,
     TASK_SCREEN,
+    TASK_EFFECT_REVERSE,            // 反相
+    TASK_EFFECT_GRAY_SCALE,         // 灰度
+    TASK_EFFECT_GRAY_SCALE_WEIGHT,  // 加权灰度
+    TASK_EFFECT_KERNEL,             // 核效果
+    TASK_EFFECT_BLUR,               // 模糊
+    TASK_EFFECT_EDGE_DETECTION,     // 边缘检测
     TASK_END
 };
 
@@ -180,6 +186,14 @@ GLuint createFrameBuffer()
     // 和普通纹理一样，设置纹理参数
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    // 注意，核在对屏幕纹理的边缘进行采样的时候，由于还会对中心像素周围的8个像素进行采样，
+    // 其实会取到纹理之外的像素。由于环绕方式默认是GL_REPEAT，所以在没有设置的情况下取到的是
+    // 屏幕另一边的像素，而另一边的像素本不应该对中心像素产生影响，这就可能会在屏幕边缘产
+    // 生很奇怪的条纹。为了消除这一问题，我们可以将屏幕纹理的环绕方式都设置为GL_CLAMP_TO_EDGE。
+    // 这样子在取到纹理外的像素时，就能够重复边缘的像素来更精确地估计最终的值了。
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 
     glBindTexture( GL_TEXTURE_2D, 0 );          // 别忘了恢复成默认的，到这一步，纹理附件已经创建完成
 
