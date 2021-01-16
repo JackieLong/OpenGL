@@ -27,6 +27,12 @@
     <ClCompile Include="src\utils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\Mesh.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\project_lib.h">
@@ -42,6 +48,12 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Camera.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

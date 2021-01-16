@@ -1,5 +1,4 @@
 ﻿#include "data.h"
-#include "Model.h"
 
 using namespace std;
 

@@ -1,7 +1,9 @@
 ﻿#ifndef __MESH_H__
 #define __MESH_H__
 
-#include "project_lib.h"
+#include <vector>
+#include "glm/glm.hpp"
+#include "shader.h"
 
 struct Vertex               // 顶点数据结构体
 {
@@ -14,7 +16,8 @@ struct Vertex               // 顶点数据结构体
 
 enum TextureType
 {
-    TEXTURE_DIFFUSE = 0,    // 漫反射贴图纹理
+    TEXTURE_AMBIENT = 0,
+    TEXTURE_DIFFUSE,        // 漫反射贴图纹理
     TEXTURE_SPECULAR,       // 镜面反射贴图纹理
     TEXTURE_NORMAL,
     TEXTURE_HEIGHT,

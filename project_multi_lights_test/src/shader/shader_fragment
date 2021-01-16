@@ -117,7 +117,7 @@ vec3 calPointLight(PointLight light, vec3 normal, vec3 viewPos, vec3 fragPos)
 	float diff    = max(											// 忽略负值
 						dot(										// 单位向量点乘：计算法向量和光照之间的余弦值
 							normalize( normal ),					// 顶点单位法向量
-							normalize( light.pos - fragPos)),	// 光照向量：光源和顶点组成的向量
+							normalize( light.pos - fragPos)),		// 光照向量：光源和顶点组成的向量
 							0.0);
 	vec3 diffuse  = light.diffuse * (diff * vec3(texture(material.diffuse, texCoord)));
 	
@@ -128,7 +128,7 @@ vec3 calPointLight(PointLight light, vec3 normal, vec3 viewPos, vec3 fragPos)
 						dot(										// 单位向量点乘求余弦：反射向量与眼睛到顶点的向量
 							normalize(								// 光照反射向量的基向量
 								reflect(							// 计算反射向量（光的反射）
-										fragPos - light.pos,	// 入射向量（光照向量）：顶点坐标 - 光源位置
+										fragPos - light.pos,		// 入射向量（光照向量）：顶点坐标 - 光源位置
 										normal)),					// 顶点法向量
 							normalize(viewPos - fragPos)),			// 顶点到观察点（眼睛）的基向量
 						0.0),

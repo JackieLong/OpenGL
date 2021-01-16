@@ -115,13 +115,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Mesh.h" />
-    <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\data.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\test.cpp" />
   </ItemGroup>
   <ItemGroup>

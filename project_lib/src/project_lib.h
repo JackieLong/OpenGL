@@ -14,6 +14,8 @@
 
 #include "stb_image.h"
 
+#include "Model.h"
+
 #include "utils.h"
 #include "shader.h"
 #include "Camera.h"

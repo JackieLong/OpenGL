@@ -15,7 +15,7 @@ void main()
 {
 	// 如果是列向量则按以下乘法顺序，OpenGL使用的是列向量。
 	gl_Position  = projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
-    texCoord = aTexCoords;    
-	fragPos = vec3(modelMatrix * vec4(aPos, 1.0));
-	normal = normalize(mat3(transpose(inverse(modelMatrix))) * aNormal);
+    texCoord     = aTexCoords;    
+	fragPos      = vec3(modelMatrix * vec4(aPos, 1.0));
+	normal       = normalize(mat3(transpose(inverse(modelMatrix))) * aNormal);
 }

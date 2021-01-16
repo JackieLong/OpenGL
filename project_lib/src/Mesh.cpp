@@ -1,4 +1,5 @@
 ﻿#include "Mesh.h"
+#include <string>
 
 using namespace std;
 

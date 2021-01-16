@@ -3,10 +3,14 @@
 in vec2 outTexCoord2D;
 in vec3 outTexCoordCube;
 in vec3 outColor;
+in vec3 outNormal;	
+in vec3 fragPos;	
 
 uniform sampler2D   texture0;
 uniform samplerCube textureCube0;
+uniform sampler2D   texture_diffuse0;
 uniform int		    task;
+uniform vec3		viewPos;
 
 out vec4 FragColor;
 
@@ -15,8 +19,15 @@ out vec4 FragColor;
 //    TASK_COORD = 0,
 //    TASK_CUBE,
 //    TASK_SKY,
+//	  TASK_REFLECT,
+//	  TASK_REFLECT_MODEL,
+//    TASK_REFRACT_MODEL,
 //    TASK_END
 //};
+
+const float refract_air   = 1.00;	// 光在空气中的折射率
+const float refract_glass = 1.52;	// 光在玻璃中的折射率
+const float ratio		  = refract_air / refract_glass;	// 光从空气射入玻璃时的折射率
 
 void main()
 {
@@ -31,5 +42,17 @@ void main()
 	else if(task == 2)
 	{
 		FragColor = texture(textureCube0, outTexCoordCube);
+	}
+	else if(task == 3)
+	{
+		FragColor = texture(textureCube0, reflect(normalize(fragPos - viewPos), normalize(outNormal)));
+	}
+	else if(task == 4)
+	{
+		FragColor = texture(textureCube0, reflect(normalize(fragPos - viewPos), normalize(outNormal)));
+	}
+	else if(task == 5)
+	{
+		FragColor = texture(textureCube0, refract(normalize(fragPos - viewPos), normalize(outNormal), ratio));
 	}
 };
