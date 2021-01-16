@@ -80,6 +80,60 @@ GLuint createTexture( const std::string &path,
     return textureID;
 }
 
+GLuint createTextureCubemap( const std::vector<std::string> &path, std::function<void()> paramCallback /*= nullptr */ )
+{
+    GLuint textureID;
+    glGenTextures( 1, &textureID );
+    glBindTexture( GL_TEXTURE_CUBE_MAP, textureID );
+
+    if( paramCallback != nullptr )
+    {
+        paramCallback();
+    }
+    else
+    {
+        glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+        glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+        glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
+    }
+
+    GLint width, height, nrChannels;
+    for( size_t i = 0; i < path.size(); i++ )
+    {
+        unsigned char *data = stbi_load( path[i].c_str(),
+                                         &width, &height,
+                                         &nrChannels, 0 );
+        if( data )
+        {
+            GLenum format = nrChannels == 1 ? GL_RED :
+                            nrChannels == 3 ? GL_RGB :
+                            nrChannels == 4 ? GL_RGBA :
+                            GL_RGB;
+
+            glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                          0,                    // mipmap level，0表示一级，如果有多级，需要挨个单独设置
+                          format,               // 告诉 OpenGL 我们希望把纹理储存为何种格式
+                          width, height,        // 纹理宽高
+                          0,                    // 总为0，历史遗留问题
+                          format,               // 图像像素的分量组成
+                          GL_UNSIGNED_BYTE,     // 每个像素分量的大小
+                          data );               // 内存中的图像数据
+        }
+        else
+        {
+            cout << "Failed to load texture::" << path[i] << endl;
+        }
+
+        stbi_image_free( data );                // 纹理数据已经上传到显存中，内存中的数据可以删除了。
+    }
+
+    glBindTexture( GL_TEXTURE_2D, 0 );      // 恢复成默认
+
+    return textureID;
+}
+
 void createVertexBuffer( const GLfloat *vertices,
                          const int &len,
                          const std::string &components,

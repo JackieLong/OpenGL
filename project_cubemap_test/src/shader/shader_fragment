@@ -1,0 +1,35 @@
+#version 330 core
+
+in vec2 outTexCoord2D;
+in vec3 outTexCoordCube;
+in vec3 outColor;
+
+uniform sampler2D   texture0;
+uniform samplerCube textureCube0;
+uniform int		    task;
+
+out vec4 FragColor;
+
+//enum SHADER_TASK
+//{
+//    TASK_COORD = 0,
+//    TASK_CUBE,
+//    TASK_SKY,
+//    TASK_END
+//};
+
+void main()
+{
+	if(task == 0)
+	{
+		FragColor = vec4(outColor, 1.0);
+	}
+	else if(task == 1)
+	{
+		FragColor = texture(texture0, outTexCoord2D);
+	}
+	else if(task == 2)
+	{
+		FragColor = texture(textureCube0, outTexCoordCube);
+	}
+};

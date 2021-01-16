@@ -6,6 +6,7 @@
 #include <direct.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <vector>
 
 // 项目目录，如D:/project/fuck
 std::string projectDir();
@@ -13,6 +14,9 @@ std::string projectDir();
 // 加载纹理到GPU
 GLuint createTexture( const std::string &path,                            // 纹理路径
                       std::function<void()> paramCallback = nullptr );    // 自定义设置纹理参数
+
+GLuint createTextureCubemap( const std::vector<std::string> &path,
+                             std::function<void()> paramCallback = nullptr );
 
 // 加载顶点数据到GPU缓冲中
 void createVertexBuffer( const GLfloat *vertices,               // 顶点数组
