@@ -106,21 +106,21 @@ Mesh Model::processMesh( aiMesh *mesh, const aiScene *scene )
 
     if( mesh->mMaterialIndex >= 0 )
     {
-        aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+        aiMaterial *material         = scene->mMaterials[mesh->mMaterialIndex];
 
-        vector<Texture> ambientMaps = loadMaterialTextures( material, aiTextureType_AMBIENT, TEXTURE_AMBIENT );
+        vector<Texture> ambientMaps  = loadMaterialTextures( material, aiTextureType_AMBIENT, TEXTURE_AMBIENT );
         textures.insert( textures.end(), ambientMaps.begin(), ambientMaps.end() );
 
-        vector<Texture> diffuseMaps = loadMaterialTextures( material, aiTextureType_DIFFUSE, TEXTURE_DIFFUSE );
+        vector<Texture> diffuseMaps  = loadMaterialTextures( material, aiTextureType_DIFFUSE, TEXTURE_DIFFUSE );
         textures.insert( textures.end(), diffuseMaps.begin(), diffuseMaps.end() );
 
         vector<Texture> specularMaps = loadMaterialTextures( material, aiTextureType_SPECULAR, TEXTURE_SPECULAR );
         textures.insert( textures.end(), specularMaps.begin(), specularMaps.end() );
 
-        vector<Texture> normalMaps = loadMaterialTextures( material, aiTextureType_SPECULAR, TEXTURE_NORMAL );
+        vector<Texture> normalMaps   = loadMaterialTextures( material, aiTextureType_SPECULAR, TEXTURE_NORMAL );
         textures.insert( textures.end(), normalMaps.begin(), normalMaps.end() );
 
-        vector<Texture> heightMaps = loadMaterialTextures( material, aiTextureType_SPECULAR, TEXTURE_HEIGHT );
+        vector<Texture> heightMaps   = loadMaterialTextures( material, aiTextureType_SPECULAR, TEXTURE_HEIGHT );
         textures.insert( textures.end(), heightMaps.begin(), heightMaps.end() );
     }
 

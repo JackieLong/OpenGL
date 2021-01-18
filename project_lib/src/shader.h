@@ -9,8 +9,9 @@ class Shader
 {
 public:
     Shader();
-    Shader( const std::string &vertexPath,       // 顶点着色器文件路径
-            const std::string &fragmentPath );   // 片元着色器文件路径
+    Shader( const std::string &vertexPath,      // 顶点着色器文件路径
+            const std::string &fragmentPath,    // 片元着色器文件路径
+            const std::string &geometryPath = "" ); // 几何着色器文件路径
 
     void use() const;                                     // 使用/激活程序
 
@@ -30,7 +31,9 @@ public:
     void setMat3( const std::string &name, const glm::mat3 &mat ) const;
     void setMat4( const std::string &name, const glm::mat4 &mat ) const;
     void setMat4( const std::string &name, const GLfloat   *values ) const;
-
+private:
+    GLuint createAndCompileShaderFromFile( GLenum shaderFlag, const std::string &shaderPath );
+    GLuint createAndCompileShader( GLenum shaderFlag, const std::string &shaderSrc );
 public:
     unsigned int id;            // 程序ID
 };

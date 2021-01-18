@@ -4,32 +4,27 @@
 
 using namespace std;
 
-int createAndCompileShader( int shaderFlag, const char *shaderSrc );
-
-Shader::Shader( const string &vertexPath, const string &fragmentPath )
+Shader::Shader( const string &vertexPath, const string &fragmentPath, const std::string &geometryPath )
 {
-    int vertexShader = -1;
-    int fragmentShader = -1;
-    std::ifstream vertexFile( vertexPath );
-    std::ifstream fragmentFile( fragmentPath );
-    if( vertexFile.is_open() && fragmentFile.is_open() )
-    {
-        std::string vertexShaderSrc( ( std::istreambuf_iterator<char>( vertexFile ) ), std::istreambuf_iterator<char>() );
-        std::string fragmentShaderSrc( ( std::istreambuf_iterator<char>( fragmentFile ) ), std::istreambuf_iterator<char>() );
-        vertexShader = createAndCompileShader( GL_VERTEX_SHADER, vertexShaderSrc.c_str() );
-        fragmentShader = createAndCompileShader( GL_FRAGMENT_SHADER, fragmentShaderSrc.c_str() );
-    }
-    vertexFile.close();
-    fragmentFile.close();
+    GLuint vertexShader = createAndCompileShaderFromFile( GL_VERTEX_SHADER, vertexPath );
+    GLuint fragmentShader = createAndCompileShaderFromFile( GL_FRAGMENT_SHADER, fragmentPath );
+
+    GLboolean gotGeometryShader = geometryPath != "";
+
+    GLuint geometryShader = gotGeometryShader ? createAndCompileShaderFromFile( GL_GEOMETRY_SHADER, geometryPath ) : -1;
 
     id = glCreateProgram();
     glAttachShader( id, vertexShader );
     glAttachShader( id, fragmentShader );
+    if( gotGeometryShader )
+    {
+        glAttachShader( id, geometryShader );
+    }
     glLinkProgram( id );
 
-    int success;                                                    // 编译成功与否
-    const int lenLog = 512;                                         // 日志长度
-    char infoLog[lenLog];                                           // 编译输出日志
+    GLint  success;                                                    // 编译成功与否
+    const  GLsizei lenLog = 512;                                         // 日志长度
+    GLchar infoLog[lenLog];                                           // 编译输出日志
     glGetProgramiv( id, GL_LINK_STATUS, &success );                 // check for linking errors
     if( !success )
     {
@@ -40,7 +35,10 @@ Shader::Shader( const string &vertexPath, const string &fragmentPath )
     // 在把着色器对象链接到程序对象以后，记得删除着色器对象，我们不再需要它们了
     glDeleteShader( vertexShader );
     glDeleteShader( fragmentShader );
-
+    if( gotGeometryShader )
+    {
+        glDeleteShader( geometryShader );
+    }
 }
 
 Shader::Shader()
@@ -123,24 +121,40 @@ void Shader::setMat4( const std::string &name, const glm::mat4 &mat ) const
     glUniformMatrix4fv( glGetUniformLocation( id, name.c_str() ), 1, GL_FALSE, &mat[0][0] );
 }
 
-// build and compile our shader program
-int createAndCompileShader( int shaderFlag, const char *shaderSrc )
+GLuint Shader::createAndCompileShaderFromFile( GLenum shaderFlag, const std::string &shaderPath )
 {
-    int shader = glCreateShader( shaderFlag );                      // 常见shader实例
-    glShaderSource( shader, 1, &shaderSrc, NULL );                  // 加载shader源码
+    GLuint shader = -1;
+    std::ifstream shaderFile( shaderPath );
+    if( shaderFile.is_open() )
+    {
+        std::string shaderSrc( ( std::istreambuf_iterator<char>( shaderFile ) ), std::istreambuf_iterator<char>() );
+        shader = createAndCompileShader( shaderFlag, shaderSrc );
+    }
+    shaderFile.close();
+    return shader;
+}
+
+
+// build and compile our shader program
+GLuint Shader::createAndCompileShader( GLenum shaderFlag, const std::string &shaderSrc )
+{
+    GLuint shader = glCreateShader( shaderFlag );                   // 常见shader实例
+    const char *tmpShaderSrc = shaderSrc.c_str();
+    glShaderSource( shader, 1, &tmpShaderSrc, NULL );               // 加载shader源码
 
     glCompileShader( shader );                                      // 编译shader
 
-    int success;                                                    // 编译成功与否
-    const int lenLog = 512;                                         // 日志长度
-    char infoLog[lenLog];                                           // 编译输出日志
+    GLint  success;                                                 // 编译成功与否
+    const  GLsizei lenLog = 512;                                    // 日志长度
+    GLchar infoLog[lenLog];                                         // 编译输出日志
     glGetShaderiv( shader, GL_COMPILE_STATUS, &success );           // 获取编译状态数据
     if( !success )
     {
         glGetShaderInfoLog( shader, lenLog, NULL, infoLog );        // 编译没有成功，获取编译日志
-        std::cout << ( shaderFlag == GL_VERTEX_SHADER ?
-                       "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" :
-                       "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" )
+        std::cout << ( shaderFlag == GL_VERTEX_SHADER ? "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" :
+                       shaderFlag == GL_FRAGMENT_SHADER ? "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" :
+                       shaderFlag == GL_GEOMETRY_SHADER ? "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" :
+                       "ERROR::SHADER::UNKNOWN::COMPILATION_FAILED\n" )
                   << infoLog
                   << std::endl;
     }
