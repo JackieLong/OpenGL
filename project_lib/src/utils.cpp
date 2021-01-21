@@ -191,11 +191,11 @@ void initGLFW()
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );                    // 主版本号：3
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );                    // 次版本号：3
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );    // 使用opengl core profile核心模式，导致必须使用VAO。
+    //glfwWindowHint( GLFW_SAMPLES, 4 );
 
     #ifdef __APPLE__
     glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE );
     #endif
-
 }
 
 bool initGLAD()
@@ -244,6 +244,7 @@ GLFWwindow *createWindow( const int         width,
             glViewport( 0, 0,               // 视口左下角位置
                         width, height );    // 视口宽高
         } );
+
     }
     return window;
 }

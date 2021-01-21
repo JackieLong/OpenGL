@@ -104,7 +104,6 @@ void drawToDefaultFrameBuffer()
     // ******* 使用默认帧缓冲，恢复成正常默认，
     // ***************************************************
     glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );          // 我们所看到的3D画面，其实就是一张平面图，即通过两个三角形组成的矩形绘制出来的。
     glDisable( GL_DEPTH_TEST );                             // 就是平面图，不需要深度值了。
 
     glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
