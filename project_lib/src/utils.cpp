@@ -276,3 +276,39 @@ GLFWwindow *createWindow( const int         width,
     }
     return window;
 }
+
+GLenum _glCheckError( const string &file, int line )
+{
+    GLenum errorCode;
+    while( ( errorCode = glGetError() ) != GL_NO_ERROR )
+    {
+        string error;
+        switch( errorCode )
+        {
+            case GL_INVALID_ENUM:
+                error = "invalid_enum";
+                break;
+            case GL_INVALID_VALUE:
+                error = "invalid_value";
+                break;
+            case GL_INVALID_OPERATION:
+                error = "invalid_operation";
+                break;
+            case GL_STACK_OVERFLOW:
+                error = "stack_overflow";
+                break;
+            case GL_STACK_UNDERFLOW:
+                error = "stack_underflow";
+            default:
+                break;
+            case GL_OUT_OF_MEMORY:
+                error = "out_of_memory";
+                break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION:
+                error = "invalid_framebuffer_operation";
+                break;
+        }
+        cout << error << "|" << file.substr( file.find_last_of( "\\" ) + 1 ) << "(" << line << ")" << endl;
+    }
+    return errorCode;
+}

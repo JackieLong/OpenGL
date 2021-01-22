@@ -8,6 +8,8 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
+#define glCheckError() _glCheckError(__FILE__, __LINE__)
+
 float randomFloat();
 
 // 项目目录，如D:/project/fuck
@@ -53,6 +55,8 @@ GLFWwindow *createWindow( const int width,                                      
                           const std::string &windowName,                        // 窗口标题
                           GLFWcursorposfun mouse_move_callback = nullptr,       // 鼠标移动回调
                           GLFWscrollfun mouse_scroll_callback  = nullptr );     // 鼠标滚轮回调
+
+GLenum _glCheckError( const std::string &file, int line );
 
 #endif
 
