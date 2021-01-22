@@ -136,11 +136,11 @@ vector<Texture> Model::loadMaterialTextures( aiMaterial *mat, aiTextureType type
         mat->GetTexture( type, i, &str );
         // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
         bool skip = false;
-        for( unsigned int j = 0; j < textures_loaded.size(); j++ )
+        for( unsigned int j = 0; j < mTextures_loaded.size(); j++ )
         {
-            if( std::strcmp( textures_loaded[j].path.data(), str.C_Str() ) == 0 )
+            if( std::strcmp( mTextures_loaded[j].path.data(), str.C_Str() ) == 0 )
             {
-                textures.push_back( textures_loaded[j] );
+                textures.push_back( mTextures_loaded[j] );
                 skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
                 break;
             }
@@ -158,7 +158,7 @@ vector<Texture> Model::loadMaterialTextures( aiMaterial *mat, aiTextureType type
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back( texture );
-            textures_loaded.push_back( texture );  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
+            mTextures_loaded.push_back( texture );  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
         }
     }
     return textures;

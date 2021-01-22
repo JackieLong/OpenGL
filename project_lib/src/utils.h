@@ -8,6 +8,8 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
+float randomFloat();
+
 // 项目目录，如D:/project/fuck
 std::string projectDir();
 
@@ -27,6 +29,17 @@ void createVertexBuffer( const GLfloat *vertices,               // 顶点数组
                          const GLuint *indices = nullptr,       // 顶点索引数组
                          const int &lenIndices = 0,             // 顶点索引数组长度（字节数）
                          GLuint *EBO = nullptr );               // Element Buffer Object
+
+void updateVertexBuffer( const GLuint *VAO,             // VAO
+                         const GLfloat *vertices,       // 数据来源，交错布局方式，这里限制了都是float类型数组
+                         const int &len,                // 数据字节数
+                         const std::string &components, // 数据属性的分量组成，如“332”表示有三个顶点属性，第一、二个属性有3个分量、第三个有2个分量。
+                         GLuint *VBO,                   // 创建的VBO保存地址
+                         const GLuint startLocation = 0,    // 起始属性位置值
+                         const GLuint *indices = nullptr,   // 不为空则表示要创建EBO
+                         const int &lenIndices = 0,         // EBO的字节数
+                         GLuint *EBO = nullptr,             // 创建的EBO的保存地址
+                         std::function<void()> callback = nullptr );
 
 // 初始化GLFW库
 void initGLFW();

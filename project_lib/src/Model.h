@@ -11,7 +11,6 @@
 #include "Mesh.h"
 #include "shader.h"
 
-static std::vector<Texture> textures_loaded;
 
 class Model
 {
@@ -26,9 +25,10 @@ private:
     Mesh processMesh( aiMesh *mesh, const aiScene *scene );
     std::vector<Texture> loadMaterialTextures( aiMaterial *mat, aiTextureType type, const TextureType &typeName );
 
-private:
-    std::vector<Mesh> mMeshes;
-    std::string       mDirectory;
+public:
+    std::vector<Mesh>    mMeshes;
+    std::vector<Texture> mTextures_loaded;
+    std::string          mDirectory;
 };
 
 #endif

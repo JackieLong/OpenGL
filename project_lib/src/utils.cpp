@@ -1,11 +1,19 @@
 ﻿#include "utils.h"
 #include <string>
 #include <sstream>
+#include <random>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 using namespace std;
+
+float randomFloat()
+{
+    static uniform_real_distribution<float> u( 0.0f, 1.0f );
+    static default_random_engine e;
+    return u( e );
+}
 
 string projectDir()
 {
@@ -144,6 +152,21 @@ void createVertexBuffer( const GLfloat *vertices,       // 数据来源，交错
                          GLuint *EBO /*= nullptr */ )           // 创建的EBO的保存地址
 {
     glGenVertexArrays( 1, VAO );        // 创建VAO
+    updateVertexBuffer( VAO, vertices, len, components, VBO, 0, indices, lenIndices, EBO );
+}
+
+
+void updateVertexBuffer( const GLuint *VAO,             // VAO
+                         const GLfloat *vertices,       // 数据来源，交错布局方式，这里限制了都是float类型数组
+                         const int &len,                // 数据字节数
+                         const std::string &components, // 数据属性的分量组成，如“332”表示有三个顶点属性，第一、二个属性有3个分量、第三个有2个分量。
+                         GLuint *VBO,                   // 创建的VBO保存地址
+                         const GLuint startLocation,    // 起始属性位置值
+                         const GLuint *indices /*= nullptr*/,   // 不为空则表示要创建EBO
+                         const int &lenIndices /*= 0*/,         // EBO的字节数
+                         GLuint *EBO /*= nullptr */,            // 创建的EBO的保存地址
+                         std::function<void()> callback /*= nullptr */ )
+{
     glBindVertexArray( *VAO );
 
     glGenBuffers( 1, VBO );             // 创建VBO
@@ -158,7 +181,7 @@ void createVertexBuffer( const GLfloat *vertices,       // 数据来源，交错
     }
 
     GLint   componentNum;   // 当前顶点属性的分量数量
-    GLsizei stride    = 0;  // 步长，一组属性的字节数
+    GLsizei stride = 0;  // 步长，一组属性的字节数
     GLint   tmpOffset = 0;  // 数据在缓冲中起始位置的偏移量
 
     for( size_t i = 0; i < components.size(); i++ )
@@ -169,14 +192,19 @@ void createVertexBuffer( const GLfloat *vertices,       // 数据来源，交错
     for( size_t i = 0; i < components.size(); i++ )
     {
         componentNum = components.at( i ) - '0';
-        glEnableVertexAttribArray( i );
-        glVertexAttribPointer( i,                           // vertex attribute的位置值，这个值对应在顶点着色器中的location=index的属性
+        glEnableVertexAttribArray( i + startLocation );
+        glVertexAttribPointer( i + startLocation,           // vertex attribute的位置值，这个值对应在顶点着色器中的location=index的属性
                                componentNum,                // 顶点属性的分量数量
                                GL_FLOAT,                    // 分量数据类型
                                GL_FALSE,                    // 数据是否需要被标准化
                                stride,                      // 步长Stride，属性间隔，注意是两个属性值相同位置的间隔，不是首尾间隔。
-                               ( GLvoid * )( tmpOffset ) );   // 数据在缓冲中起始位置的偏移量
+                               ( GLvoid * )( tmpOffset ) );    // 数据在缓冲中起始位置的偏移量
         tmpOffset += componentNum * sizeof( GLfloat );
+    }
+
+    if( callback )
+    {
+        callback();
     }
 
     glBindVertexArray( 0 );
