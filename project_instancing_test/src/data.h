@@ -155,7 +155,7 @@ void loadInstanceVertexAttrib( GLuint &VBO, const vector<glm::mat4> &vModelMatri
 
     const GLsizei vec4Size      = sizeof( glm::vec4 );
     const GLsizei stride        = 4 * vec4Size;
-    const GLint   components    = 4;
+    const GLint   componentNum  = 4;
     const GLuint  startLocation = 10;       // 矩阵顶点属性位置值（第一个vec4的位置值）
     for( auto &mesh : modelRock->mMeshes )
     {
@@ -163,13 +163,13 @@ void loadInstanceVertexAttrib( GLuint &VBO, const vector<glm::mat4> &vModelMatri
 
         // 设置矩阵类型顶点属性的方法，实际上就是把矩阵看成一个4 x vec4的向量数组。
         glEnableVertexAttribArray( startLocation + 0 );
-        glVertexAttribPointer( startLocation + 0, components, GL_FLOAT, GL_FALSE, stride, ( GLvoid * )( 0 * vec4Size ) );
+        glVertexAttribPointer( startLocation + 0, componentNum, GL_FLOAT, GL_FALSE, stride, ( GLvoid * )( 0 * vec4Size ) );
         glEnableVertexAttribArray( startLocation + 1 );
-        glVertexAttribPointer( startLocation + 1, components, GL_FLOAT, GL_FALSE, stride, ( GLvoid * )( 1 * vec4Size ) );
+        glVertexAttribPointer( startLocation + 1, componentNum, GL_FLOAT, GL_FALSE, stride, ( GLvoid * )( 1 * vec4Size ) );
         glEnableVertexAttribArray( startLocation + 2 );
-        glVertexAttribPointer( startLocation + 2, components, GL_FLOAT, GL_FALSE, stride, ( GLvoid * )( 2 * vec4Size ) );
+        glVertexAttribPointer( startLocation + 2, componentNum, GL_FLOAT, GL_FALSE, stride, ( GLvoid * )( 2 * vec4Size ) );
         glEnableVertexAttribArray( startLocation + 3 );
-        glVertexAttribPointer( startLocation + 3, components, GL_FLOAT, GL_FALSE, stride, ( GLvoid * )( 3 * vec4Size ) );
+        glVertexAttribPointer( startLocation + 3, componentNum, GL_FLOAT, GL_FALSE, stride, ( GLvoid * )( 3 * vec4Size ) );
 
         // 每一个实例迭代更新一次
         glVertexAttribDivisor( startLocation + 0, 1 );
