@@ -24,7 +24,10 @@
     <ClInclude Include="src\test_glGetError.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\test_DebugOutput.h">
+    <ClInclude Include="src\test_debugOutputTexture.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\test_debugOutput.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

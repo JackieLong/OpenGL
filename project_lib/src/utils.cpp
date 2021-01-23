@@ -1,10 +1,13 @@
-﻿#include "utils.h"
+#include "utils.h"
 #include <string>
 #include <sstream>
 #include <random>
+#include "glm/glm.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+#include "shader.h"
 
 using namespace std;
 
@@ -311,4 +314,66 @@ GLenum _glCheckError( const string &file, int line )
         cout << error << "|" << file.substr( file.find_last_of( "\\" ) + 1 ) << "(" << line << ")" << endl;
     }
     return errorCode;
+}
+
+const GLenum    textureCellID = GL_TEXTURE0;                                        // 调试输出使用的纹理单元ID
+const GLfloat   winWidth      = 0.5f;                                               // 窗口宽
+const GLfloat   winHeight     = 0.5f;                                               // 窗口高
+const glm::vec2 winPos        = glm::vec2( 1.0f - winWidth, 1.0f - winHeight );     // 窗口左下角位置
+const GLfloat vertices_debugOutputTexture[] =
+{
+    // 顶点坐标（NDC坐标）                        // 纹理坐标
+    winPos.x, winPos.y,                         0.0f, 0.0f,     // 左下角
+    winPos.x + winWidth, winPos.y,              1.0f, 0.0f,     // 右下角
+    winPos.x + winWidth, winPos.y + winHeight,  1.0f, 1.0f,     // 右上角
+
+    winPos.x, winPos.y,                         0.0f, 0.0f,     // 左下角
+    winPos.x + winWidth, winPos.y + winHeight,  1.0f, 1.0f,     // 右上角
+    winPos.x, winPos.y + winHeight,             0.0f, 1.0f,     // 左上角
+};
+const string vertexShaderSrc_debugOutputTexture =               // 顶点着色器
+                "#version 330 core														\n\
+																						\n\
+				layout( location = 0 ) in vec2 aPos;		// 直接是NDC坐标				\n\
+				layout( location = 1 ) in vec2 aTexCoords;	// 纹理坐标					\n\
+				out vec2 texCoords;														\n\
+																						\n\
+				void main() {															\n\
+					gl_Position = vec4( aPos, 0.0, 1.0 );								\n\
+					texCoords = aTexCoords;												\n\
+				}";
+const string fragmentShaderSrc_debugOutputTexture =             // 片段着色器
+                "#version 330 core										\n\
+																		\n\
+				in  vec2 texCoords;										\n\
+				uniform sampler2D textureSampler;						\n\
+				out vec4 FragColor;										\n\
+																		\n\
+				void main() {											\n\
+					FragColor = texture( textureSampler, texCoords );	\n\
+				}";
+
+GLuint VAO_debugOutputTexture = -1;
+GLuint VBO_debugOutputTexture = -1;
+Shader shader_debugOutputTexture;
+void debugOutputTexture( GLuint textureID )
+{
+    if( VAO_debugOutputTexture == -1 )
+    {
+        createVertexBuffer( vertices_debugOutputTexture,
+                            sizeof( vertices_debugOutputTexture ),
+                            "22",
+                            &VAO_debugOutputTexture,
+                            &VBO_debugOutputTexture );
+        shader_debugOutputTexture.initWithSrc( vertexShaderSrc_debugOutputTexture,
+                                               fragmentShaderSrc_debugOutputTexture );
+    }
+    glBindVertexArray( VAO_debugOutputTexture );
+    glActiveTexture( textureCellID );
+    glBindTexture( GL_TEXTURE_2D, textureID );
+    shader_debugOutputTexture.use();
+    shader_debugOutputTexture.setInt( "textureSampler", textureCellID - GL_TEXTURE0 );
+    glDrawArrays( GL_TRIANGLES, 0, 6 );
+    glBindVertexArray( 0 );
+    glUseProgram( 0 );
 }

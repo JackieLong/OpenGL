@@ -1,17 +1,39 @@
 ﻿#include <fstream>
-
 #include "shader.h"
 
 using namespace std;
 
+void loadStringFromFile( const string &filePath, string &content );
+
+Shader::Shader()
+    : id( -1 )
+{
+
+}
+
 Shader::Shader( const string &vertexPath, const string &fragmentPath, const std::string &geometryPath )
 {
-    GLuint vertexShader = createAndCompileShaderFromFile( GL_VERTEX_SHADER, vertexPath );
-    GLuint fragmentShader = createAndCompileShaderFromFile( GL_FRAGMENT_SHADER, fragmentPath );
+    initWithFile( vertexPath, fragmentPath, geometryPath );
+}
 
-    GLboolean gotGeometryShader = geometryPath != "";
+void Shader::initWithFile( const string &vertexPath, const string &fragmentPath, const std::string &geometryPath )
+{
+    string vertexShaderSrc, fragmentShaderSrc, geometryShaderSrc;
+    loadStringFromFile( vertexPath, vertexShaderSrc );
+    loadStringFromFile( fragmentPath, fragmentShaderSrc );
+    loadStringFromFile( geometryPath, geometryShaderSrc );
 
-    GLuint geometryShader = gotGeometryShader ? createAndCompileShaderFromFile( GL_GEOMETRY_SHADER, geometryPath ) : -1;
+    initWithSrc( vertexShaderSrc, fragmentShaderSrc, geometryShaderSrc );
+}
+
+void Shader::initWithSrc( const std::string &vertexShaderSrc, const std::string &fragmentShaderSrc, const std::string &geometryShaderSrc )
+{
+    GLuint vertexShader = createAndCompileShader( GL_VERTEX_SHADER, vertexShaderSrc );
+    GLuint fragmentShader = createAndCompileShader( GL_FRAGMENT_SHADER, fragmentShaderSrc );
+
+    GLboolean gotGeometryShader = geometryShaderSrc != "";
+
+    GLuint geometryShader = gotGeometryShader ? createAndCompileShader( GL_GEOMETRY_SHADER, geometryShaderSrc ) : -1;
 
     id = glCreateProgram();
     glAttachShader( id, vertexShader );
@@ -41,28 +63,22 @@ Shader::Shader( const string &vertexPath, const string &fragmentPath, const std:
     }
 }
 
-Shader::Shader()
-    : id( -1 )
-{
-
-}
-
 void Shader::use() const
 {
     glUseProgram( id );
 }
 
-void Shader::setBool( const std::string &name, bool value ) const
+void Shader::setBool( const std::string &name, GLboolean value ) const
 {
     glUniform1i( glGetUniformLocation( id, name.c_str() ), ( int )value );
 }
 
-void Shader::setInt( const std::string &name, int value ) const
+void Shader::setInt( const std::string &name, GLint value ) const
 {
     glUniform1i( glGetUniformLocation( id, name.c_str() ), value );
 }
 
-void Shader::setFloat( const std::string &name, float value ) const
+void Shader::setFloat( const std::string &name, GLfloat value ) const
 {
     glUniform1f( glGetUniformLocation( id, name.c_str() ), value );
 }
@@ -72,7 +88,7 @@ void Shader::setVec2( const std::string &name, const glm::vec2 &value ) const
     glUniform2fv( glGetUniformLocation( id, name.c_str() ), 1, &value[0] );
 }
 
-void Shader::setVec2( const std::string &name, float x, float y ) const
+void Shader::setVec2( const std::string &name, GLfloat x, GLfloat y ) const
 {
     glUniform2f( glGetUniformLocation( id, name.c_str() ), x, y );
 }
@@ -82,7 +98,7 @@ void Shader::setVec3( const std::string &name, const glm::vec3 &value ) const
     glUniform3fv( glGetUniformLocation( id, name.c_str() ), 1, &value[0] );
 }
 
-void Shader::setVec3( const std::string &name, float x, float y, float z ) const
+void Shader::setVec3( const std::string &name, GLfloat x, GLfloat y, GLfloat z ) const
 {
     glUniform3f( glGetUniformLocation( id, name.c_str() ), x, y, z );
 }
@@ -92,7 +108,7 @@ void Shader::setVec4( const std::string &name, const glm::vec4 &value ) const
     glUniform4fv( glGetUniformLocation( id, name.c_str() ), 1, &value[0] );
 }
 
-void Shader::setVec4( const std::string &name, float x, float y, float z, float w )
+void Shader::setVec4( const std::string &name, GLfloat x, GLfloat y, GLfloat z, GLfloat w )
 {
     glUniform4f( glGetUniformLocation( id, name.c_str() ), x, y, z, w );
 }
@@ -109,7 +125,7 @@ void Shader::setMat3( const std::string &name, const glm::mat3 &mat ) const
 
 void Shader::setMat4( const std::string &name, const GLfloat *values ) const
 {
-    unsigned int transformLoc = glGetUniformLocation( id, name.c_str() );
+    GLint transformLoc = glGetUniformLocation( id, name.c_str() );
     glUniformMatrix4fv( transformLoc,   // 位置值
                         1,              // 需要修改的矩阵数量
                         GL_FALSE,       // 是否需要转置矩阵，有些平台使用列向量（列主序），有些平台使用行向量（行主序）。
@@ -121,18 +137,18 @@ void Shader::setMat4( const std::string &name, const glm::mat4 &mat ) const
     glUniformMatrix4fv( glGetUniformLocation( id, name.c_str() ), 1, GL_FALSE, &mat[0][0] );
 }
 
-GLuint Shader::createAndCompileShaderFromFile( GLenum shaderFlag, const std::string &shaderPath )
-{
-    GLuint shader = -1;
-    std::ifstream shaderFile( shaderPath );
-    if( shaderFile.is_open() )
-    {
-        std::string shaderSrc( ( std::istreambuf_iterator<char>( shaderFile ) ), std::istreambuf_iterator<char>() );
-        shader = createAndCompileShader( shaderFlag, shaderSrc );
-    }
-    shaderFile.close();
-    return shader;
-}
+//GLuint Shader::createAndCompileShaderFromFile( GLenum shaderFlag, const std::string &shaderPath )
+//{
+//    GLuint shader = -1;
+//    std::ifstream shaderFile( shaderPath );
+//    if( shaderFile.is_open() )
+//    {
+//        std::string shaderSrc( ( std::istreambuf_iterator<char>( shaderFile ) ), std::istreambuf_iterator<char>() );
+//        shader = createAndCompileShader( shaderFlag, shaderSrc );
+//    }
+//    shaderFile.close();
+//    return shader;
+//}
 
 
 // build and compile our shader program
@@ -159,4 +175,19 @@ GLuint Shader::createAndCompileShader( GLenum shaderFlag, const std::string &sha
                   << std::endl;
     }
     return shader;
+}
+
+void loadStringFromFile( const string &filePath, string &content )
+{
+    std::ifstream fileStream( filePath );
+    if( fileStream.is_open() )
+    {
+        content = string( ( std::istreambuf_iterator<char>( fileStream ) ), std::istreambuf_iterator<char>() );
+        fileStream.close();
+    }
+    else
+    {
+        cout << "file open failed.[" << filePath.c_str() << "]";
+        content = "";
+    }
 }

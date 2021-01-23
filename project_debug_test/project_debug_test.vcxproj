@@ -116,7 +116,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\data.h" />
-    <ClInclude Include="src\test_DebugOutput.h" />
+    <ClInclude Include="src\test_debugOutput.h" />
+    <ClInclude Include="src\test_debugOutputTexture.h" />
     <ClInclude Include="src\test_glGetError.h" />
   </ItemGroup>
   <ItemGroup>

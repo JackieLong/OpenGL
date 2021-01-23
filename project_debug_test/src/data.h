@@ -44,9 +44,16 @@ GLuint VAO = 0, VBO = 0, EBO = 0;
 
 Shader shader;
 
+GLuint texture_debugOutput;
+
+void loadData()
+{
+    texture_debugOutput = createTexture( projectDir() + "/res/wall.jpg" );
+}
+
 void initGLState()
 {
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );    // GL_LINE：线框模式；GL_FILL：填充模式
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );    // GL_LINE：线框模式；GL_FILL：填充模式
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
