@@ -59,6 +59,7 @@ GLFWwindow *createWindow( const int width,                                      
 GLenum _glCheckError( const std::string &file, int line );
 
 void debugOutputTexture( GLuint textureID );
+void initDebugOutputCallback();
 
 #endif
 

@@ -1,0 +1,14 @@
+#version 330 core
+
+layout (location = 0) in vec4 vertex;	// <vec2 pos, vec2 tex>
+uniform mat4 projectionMatrix;			// 文字一般都是2D显示，也就是采用正交投影
+out     vec2 TexCoords;					// 纹理坐标
+
+void main()
+{
+	// vertex.xy 顶点坐标
+	// vertex.zw 纹理坐标
+
+    gl_Position = projectionMatrix * vec4(vertex.xy, 0.0, 1.0);
+	TexCoords   = vertex.zw;
+}

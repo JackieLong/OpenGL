@@ -179,6 +179,11 @@ GLuint Shader::createAndCompileShader( GLenum shaderFlag, const std::string &sha
 
 void loadStringFromFile( const string &filePath, string &content )
 {
+    if( filePath == "" )
+    {
+        content = "";
+        return;
+    }
     std::ifstream fileStream( filePath );
     if( fileStream.is_open() )
     {
@@ -187,7 +192,7 @@ void loadStringFromFile( const string &filePath, string &content )
     }
     else
     {
-        cout << "file open failed.[" << filePath.c_str() << "]";
+        //cout << "file open failed.[" << filePath.c_str() << "]";
         content = "";
     }
 }
