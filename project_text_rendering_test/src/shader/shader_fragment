@@ -1,8 +1,7 @@
 #version 330 core
 
-in  vec2 TexCoords;
-
-uniform sampler2D text;
+in      vec2      TexCoords;	// 纹理坐标
+uniform sampler2D textTexture;	// 纹理采样器
 uniform vec3      textColor;	// 字体颜色
 
 out vec4 FragColor;
@@ -10,6 +9,5 @@ out vec4 FragColor;
 void main()
 {
 	// 8bit灰度图
-	vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
-    FragColor    = vec4(textColor, 1.0) * sampled;
+    FragColor    = vec4(textColor, texture(textTexture, TexCoords).r);
 }
