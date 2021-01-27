@@ -16,9 +16,6 @@
 
 #include "stb_image.h"
 
-#include "freetype/ft2build.h"
-#include "freetype/freetype/freetype.h"
-
 #include "Model.h"
 
 #include "utils.h"

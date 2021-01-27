@@ -116,6 +116,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\test.cpp" />
+    <ClCompile Include="src\test_EBO.h" />
+    <ClCompile Include="src\test_VAO.h" />
+    <ClCompile Include="src\test_VBO.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\data.h" />

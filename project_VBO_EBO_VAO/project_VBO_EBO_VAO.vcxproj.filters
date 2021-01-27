@@ -21,6 +21,15 @@
     <ClCompile Include="src\test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\test_EBO.h">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\test_VAO.h">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\test_VBO.h">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\data.h">

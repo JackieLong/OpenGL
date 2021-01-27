@@ -3,6 +3,9 @@
 
 #include "project_lib.h"
 
+#include "freetype/ft2build.h"
+#include "freetype/freetype/freetype.h"
+
 using namespace std;
 
 const GLint ScreenWidth = 800;
